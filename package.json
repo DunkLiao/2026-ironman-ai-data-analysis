@@ -1,0 +1,14 @@
+﻿{
+  "name": "anki-to-qa-html",
+  "version": "1.0.0",
+  "description": "Convert Anki source text files to modern interactive QA web pages",
+  "main": "convert.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --preserve-symlinks-main convert.js",
+    "build": "node --preserve-symlinks-main convert.js"
+  },
+  "keywords": ["anki", "html", "qa", "flashcard"],
+  "author": "",
+  "license": "MIT"
+}
