@@ -7,6 +7,8 @@ import test from "node:test";
 import {
   DEFAULT_CONFIG,
   applyTemplate,
+  generateHtmlPage,
+  generateIndexPage,
   loadConfig
 } from "../convert.js";
 
@@ -38,4 +40,26 @@ test("applyTemplate replaces known variables and leaves unknown variables intact
   });
 
   assert.equal(actual, "Day1 共有 55 題，{unknown}");
+});
+
+test("generated unit page defaults to light theme and supports manual dark mode", () => {
+  const html = generateHtmlPage("Day1", [{ id: 1, question: "問題", answer: "答案" }], DEFAULT_CONFIG);
+
+  assert.match(html, /data-theme="light"/);
+  assert.match(html, /localStorage\.getItem\(THEME_STORAGE_KEY\) \|\| "light"/);
+  assert.match(html, /function toggleTheme\(\)/);
+  assert.match(html, /<button[^>]+id="themeToggleBtn"[^>]*>/);
+  assert.match(html, /html\[data-theme="dark"\]/);
+  assert.doesNotMatch(html, /prefers-color-scheme/);
+});
+
+test("generated index page defaults to light theme and supports manual dark mode", () => {
+  const html = generateIndexPage([{ baseName: "Day1", fileName: "Day1.html", count: 1 }], DEFAULT_CONFIG);
+
+  assert.match(html, /data-theme="light"/);
+  assert.match(html, /localStorage\.getItem\(THEME_STORAGE_KEY\) \|\| "light"/);
+  assert.match(html, /function toggleTheme\(\)/);
+  assert.match(html, /<button[^>]+id="themeToggleBtn"[^>]*>/);
+  assert.match(html, /html\[data-theme="dark"\]/);
+  assert.doesNotMatch(html, /prefers-color-scheme/);
 });

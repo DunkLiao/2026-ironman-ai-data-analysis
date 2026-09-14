@@ -95,7 +95,7 @@ function generateHtmlPage(baseName, items, config) {
   const itemsJson = JSON.stringify(items);
 
   return `<!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -123,19 +123,17 @@ function generateHtmlPage(baseName, items, config) {
       --radius: 12px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #0f172a;
-        --card-bg: #1e293b;
-        --text-main: #f8fafc;
-        --text-muted: #94a3b8;
-        --primary: #60a5fa;
-        --primary-hover: #3b82f6;
-        --primary-light: #1e3a8a33;
-        --border-color: #334155;
-        --success: #34d399;
-        --success-light: #064e3b33;
-      }
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
+      --success: #34d399;
+      --success-light: #064e3b33;
     }
 
     * {
@@ -212,6 +210,14 @@ function generateHtmlPage(baseName, items, config) {
       border: 1px solid var(--border-color);
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
     .toggle-btn {
       padding: 6px 14px;
       border: none;
@@ -228,6 +234,24 @@ function generateHtmlPage(baseName, items, config) {
       background: var(--card-bg);
       color: var(--primary);
       box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
     /* Main Container */
@@ -593,9 +617,12 @@ function generateHtmlPage(baseName, items, config) {
         <a href="../index.html" class="back-btn" title="回目錄">← 目錄</a>
         <h1 class="page-title">${escapeHtml(pageHeading)}</h1>
       </div>
-      <div class="view-toggles">
-        <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
-        <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+        <div class="view-toggles">
+          <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
+          <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+        </div>
       </div>
     </div>
   </header>
@@ -662,6 +689,7 @@ function generateHtmlPage(baseName, items, config) {
   </main>
 
   <script>
+    const THEME_STORAGE_KEY = "qa_theme";
     const STORAGE_KEY = "anki_mastered_" + "${baseName}";
     const RAW_DATA = ${itemsJson};
     let currentData = [...RAW_DATA];
@@ -670,6 +698,31 @@ function generateHtmlPage(baseName, items, config) {
     let filterOnlyUnmastered = false;
     let isAllExpanded = false;
     let cardIndex = 0;
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
 
     function saveMastered() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(masteredSet)));
@@ -950,7 +1003,7 @@ function generateIndexPage(manifest, config) {
   const siteHeading = [config.siteIcon, config.siteTitle].filter(Boolean).join(" ");
 
   return `<!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -970,17 +1023,15 @@ function generateIndexPage(manifest, config) {
       --radius: 12px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #0f172a;
-        --card-bg: #1e293b;
-        --text-main: #f8fafc;
-        --text-muted: #94a3b8;
-        --primary: #60a5fa;
-        --primary-hover: #3b82f6;
-        --primary-light: #1e3a8a33;
-        --border-color: #334155;
-      }
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1000,6 +1051,30 @@ function generateIndexPage(manifest, config) {
     .header-section {
       text-align: center;
       margin-bottom: 40px;
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
     .header-section h1 {
@@ -1085,6 +1160,9 @@ function generateIndexPage(manifest, config) {
 </head>
 <body>
   <div class="container">
+    <div class="top-actions">
+      <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+    </div>
     <div class="header-section">
       <h1>${escapeHtml(siteHeading)}</h1>
       <p>${escapeHtml(config.indexSubtitle)}</p>
@@ -1093,6 +1171,34 @@ function generateIndexPage(manifest, config) {
       ${cardsHtml}
     </div>
   </div>
+  <script>
+    const THEME_STORAGE_KEY = "qa_theme";
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
+  </script>
 </body>
 </html>`;
 }
@@ -1164,5 +1270,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
 export {
   DEFAULT_CONFIG,
   applyTemplate,
+  generateHtmlPage,
+  generateIndexPage,
   loadConfig
 };

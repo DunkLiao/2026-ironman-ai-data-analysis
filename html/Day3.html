@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,19 +27,17 @@
       --radius: 12px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #0f172a;
-        --card-bg: #1e293b;
-        --text-main: #f8fafc;
-        --text-muted: #94a3b8;
-        --primary: #60a5fa;
-        --primary-hover: #3b82f6;
-        --primary-light: #1e3a8a33;
-        --border-color: #334155;
-        --success: #34d399;
-        --success-light: #064e3b33;
-      }
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
+      --success: #34d399;
+      --success-light: #064e3b33;
     }
 
     * {
@@ -116,6 +114,14 @@
       border: 1px solid var(--border-color);
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
     .toggle-btn {
       padding: 6px 14px;
       border: none;
@@ -132,6 +138,24 @@
       background: var(--card-bg);
       color: var(--primary);
       box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
     /* Main Container */
@@ -497,9 +521,12 @@
         <a href="../index.html" class="back-btn" title="回目錄">← 目錄</a>
         <h1 class="page-title">Day3 問答卡</h1>
       </div>
-      <div class="view-toggles">
-        <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
-        <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+        <div class="view-toggles">
+          <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
+          <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+        </div>
       </div>
     </div>
   </header>
@@ -566,14 +593,40 @@
   </main>
 
   <script>
+    const THEME_STORAGE_KEY = "qa_theme";
     const STORAGE_KEY = "anki_mastered_" + "Day3";
-    const RAW_DATA = [{"id":1,"question":"數據分析的時間分配法則：在一個標準的數據分析專案中，「準備與處理資料」通常佔據多少時間比例？","answer":"約佔整體的 $60$ 到 $70\\%$。"},{"id":2,"question":"根據 Gartner 的四大數據分析類型，哪一種分析旨在回答「發生了什麼事？」","answer":"描述性分析（Descriptive Analysis）。"},{"id":3,"question":"根據 Gartner 的四大數據分析類型，哪一種分析旨在回答「為何會發生？」","answer":"診斷性分析（Diagnostic Analysis）。"},{"id":4,"question":"旨在預測「將來會發生什麼？」的分析類型稱為 _____。","answer":"預測性分析（Predictive Analysis）"},{"id":5,"question":"旨在探討「我們可以做什麼，來讓未來更符合期待」的分析類型稱為 _____。","answer":"處方性分析（Prescriptive Analysis）"},{"id":6,"question":"在數據分析流程中，第一步通常是什麼？","answer":"定義要分析的問題（提問）。"},{"id":7,"question":"數據分析流程的最終目標（最後一步）是什麼？","answer":"根據分析結果採取行動（Action）。"},{"id":8,"question":"資料品質維度：確保資料中沒有重複紀錄的特性稱為 _____。","answer":"獨特性（Uniqueness）"},{"id":9,"question":"資料品質維度：資料能正確反映所描述事物的特性稱為 _____。","answer":"準確性（Accuracy）"},{"id":10,"question":"資料品質維度：具備足夠屬性以得出有意義結論的特性稱為 _____。","answer":"完整性（Completeness）"},{"id":11,"question":"資料品質維度：資料是否新鮮、即時的特性稱為 _____。","answer":"即時性（Timeliness）"},{"id":12,"question":"資料品質維度：不同資料集或來源之間沒有矛盾且定義相同的特性稱為 _____。","answer":"一致性（Consistency）"},{"id":13,"question":"資料品質維度：符合預定規則、格式與標準（如年齡無負值）的特性稱為 _____。","answer":"有效性（Validity）"},{"id":14,"question":"數據清洗場景：將單一欄位的內容分散到不同欄位（如 Taiwan, Taipei 切分）的操作稱為 _____。","answer":"切割（Split）"},{"id":15,"question":"數據清洗場景：去除字串中無意義的空白資料稱為 _____。","answer":"修剪（Trim）"},{"id":16,"question":"數據清洗場景：將缺失或遺失的數據填補回去稱為 _____。","answer":"補值（Append）"},{"id":17,"question":"數據清洗場景：將多個欄位的資料結合成單一欄位稱為 _____。","answer":"合併（Merge）"},{"id":18,"question":"數據清洗場景：將「日期」或「貨幣」格式進行調整以相容於分析工具稱為 _____。","answer":"格式轉換（Format）"},{"id":19,"question":"數據清洗場景：將欄與列的位置進行交換的作業稱為 _____。","answer":"轉置（Transposing/pivoting）"},{"id":20,"question":"資料清洗層級：Level 1 基礎處理的核心任務是什麼？","answer":"初步清理原始資料、檢查資料型態與處理明顯錯誤。"},{"id":21,"question":"資料清洗層級：Level 2 主要探討如何處理 _____ 重複數據（如 Google, Inc. 與 Google LLC）。","answer":"非精確匹配（模糊重複）"},{"id":22,"question":"資料清洗層級：Level 4 的重點在於建立什麼流程？","answer":"自動化資料清洗與監控流程（Data Pipeline）。"},{"id":23,"question":"在進行數據分析前，若未清洗資料導致「Gardbage In」，其結果通常被稱為 _____。","answer":"Garbage Out（垃圾進，垃圾出）"},{"id":24,"question":"繪製長條圖（Bar Chart）時，為什麼建議 Y 軸應從零開始？","answer":"為了避免視覺上過度誇大數據間的差異。"},{"id":25,"question":"在比較數據大小時，「面積圖」比「長條圖」更容易產生誤導的原因是什麼？","answer":"人類視覺對長度（一次方）的判斷比對面積（二次方）精確。"},{"id":26,"question":"視覺化工具比較：Tableau 與 Power BI 的核心概念雖然相似，但主要差異在於 _____。","answer":"設計風格、操作邏輯與公司系統生態的整合。"},{"id":27,"question":"Tableau Public 版本相較於付費版，主要限制為何？","answer":"無法保護私密資料，作品必須發布到公開雲端。"},{"id":28,"question":"為什麼在 Tableau 中繪圖前需要先檢查「資料屬性」？","answer":"確保維度（如日期、地點）被正確識別，以便進行後續分析。"},{"id":29,"question":"在 Tableau 中，「熱度圖」（Highlight Table）主要的觀察用途為何？","answer":"利用顏色深淺快速找出數值的極端分佈或缺失狀況。"},{"id":30,"question":"AI 數據分析優勢：使用 AI 生成 Excel 函數的主要優點是什麼？","answer":"降低資安疑慮（不需上傳原始資料）且過程可重現。"},{"id":31,"question":"AI 數據分析劣勢：直接上傳資料讓 AI 進行清洗的主要缺點為何？","answer":"難以重現計算過程，且 AI 可能會產生不可控的錯誤。"},{"id":32,"question":"與 AI 對話時，為了獲得精確的分析結果，應採用什麼樣的指令技術？","answer":"結構化指令（Structured Prompting）。"},{"id":33,"question":"在診斷性分析中，常用的思考方法是什麼？","answer":"假說思考法（提出假說並進行驗證）。"},{"id":34,"question":"Excel 的資料列數極限大約是多少？","answer":"約 $104$ 萬筆。"},{"id":35,"question":"什麼樣的檔案格式（如 .csv）適合處理超過 Excel 筆數限制的大型資料？","answer":"純文字結構化資料格式（CSV）。"},{"id":36,"question":"在 Excel 中，可以用哪一個內建功能將「台南市永康區」切割成兩欄？","answer":"資料剖析（Text to Columns）。"},{"id":37,"question":"Excel 樞紐分析表的主要用途是什麼？","answer":"從不同維度整合大批量數據，進行快速彙整與觀察。"},{"id":38,"question":"在分析交通意外數據時，若想知道「哪一個時段最容易發生事故」，需要從原始時間中取出什麼欄位？","answer":"小時（Hour）。"},{"id":39,"question":"在數據分析分享階段，圖表製作的主要目的是為了改善 _____。","answer":"數據溝通的效率（Data Communication）。"},{"id":40,"question":"在 Tableau 中，若要觀察不同年份的趨勢，應將日期欄位放在「欄」還是「列」？","answer":"欄（Columns）。"},{"id":41,"question":"什麼是「數據思維」的起點？","answer":"從一個具體的商業提問或目標出發。"},{"id":42,"question":"診斷性分析中「追問」AI 的目的是什麼？","answer":"利用對話上下文進行深層原因探索，不需要重複描述背景。"},{"id":43,"question":"在處理台灣交通資料時，「發生時間」為民國年，轉換成西元年屬於哪種資料清洗操作？","answer":"格式轉換（Format）。"},{"id":44,"question":"在 Tableau 中，將特定欄位（如 Category）拖曳至「顏色」標記的作用是什麼？","answer":"根據類別區分數據的視覺呈現，以便進行分類比較。"},{"id":45,"question":"在結構化資料中，每一個欄位應該代表 _____。","answer":"單一且獨立的屬性或維度。"},{"id":46,"question":"數據溝通中，為何要避免使用過於擁擠或顏色過雜的圖表？","answer":"因為會增加閱覽者的認知負擔，降低資訊傳遞效率。"},{"id":47,"question":"AI 素養中，調整對話指令（Prompt）的過程稱為 _____。","answer":"疊代（Iteration）。"},{"id":48,"question":"資料品質評估中的「一致性」對於金融業特別重要的原因是什麼？","answer":"確保跨系統或跨幣別的數據計算不會發生偏差。"},{"id":49,"question":"在 Tableau 中，「顆粒度」指的是資料呈現的 _____。","answer":"精細程度（如由年份展開至月份或日期）。"},{"id":50,"question":"AI 數據分析提示詞建議：若要請 AI 生成複雜函數，最好先提供什麼資訊？","answer":"資料欄位名稱及前幾筆範例資料。"},{"id":51,"question":"Tableau 的「標誌」（Marks）窗格主要包含哪些視覺屬性？","answer":"顏色、大小、文字、詳細資料、工具提示。"},{"id":52,"question":"在數據分析的分享（Share）階段，除了圖表外，最重要的要素是什麼？","answer":"數據說故事（Data Storytelling）的能力。"},{"id":53,"question":"為何「描述性分析」是數據分析專案的第一個實質分析步驟？","answer":"為了客觀掌握資料的現狀、分佈與基本統計指標。"},{"id":54,"question":"在 Excel 函數中，`VALUE` 函數的主要作用是什麼？","answer":"將文字格式的數字轉換為可計算的數值格式。"},{"id":55,"question":"數據分析循環中，「行動」後若未達成目標，下一個步驟是什麼？","answer":"回到提問階段，進行下一輪的分析疊代。"},{"id":56,"question":"資料品質維度：如果員編應該是唯一碼，這對應到哪一個特性？","answer":"獨特性（Uniqueness）。"},{"id":57,"question":"在 AI 輔助下，初學者也能快速進行分析的關鍵在於如何正確地 _____。","answer":"描述資料結構與分析需求（提問）。"},{"id":58,"question":"當數據量極大且更新頻繁時，應提升到哪一個資料處理層級？","answer":"Level 4（自動化數據清洗與監控）。"},{"id":59,"question":"視覺化心理學：為什麼我們會優先看長條圖中最高的條柱？","answer":"因為大腦會直覺地先處理視覺對比最顯著的部分。"},{"id":60,"question":"Tableau 的核心優勢之一是其強大的 _____ 處理能力。","answer":"地理資訊（地圖）與時間維度。"}];
+    const RAW_DATA = [{"id":1,"question":"在人工智慧生命週期中，哪種偏差是指訓練數據反映了過去的社會歧視，導致模型複製這些模式？","answer":"代表性偏差或歷史偏差 (Representational/Historical Bias)。"},{"id":2,"question":"當數據收集過程本身偏向特定樣本，或使用的標籤僅是真實結果的代理指標時，會產生哪種偏差？","answer":"選擇或測量偏差 (Selection/Measurement Bias)。"},{"id":3,"question":"所謂的「回饋偏差」(Feedback Bias) 是指模型輸出如何影響未來的系統行為？","answer":"模型輸出塑造未來數據，例如推薦系統放大已受歡迎的內容，使少數群體的偏好失去信號。"},{"id":4,"question":"在機器學習公平性中，哪一階段的緩解措施主要涉及分層抽樣、重新加權和數據集文件記錄？","answer":"預處理階段 (Pre-processing)。"},{"id":5,"question":"「中處理」(In-processing) 緩解方法主要在 AI 生命週期的哪一個環節實施？","answer":"模型訓練與優化階段。"},{"id":6,"question":"哪一種後處理 (Post-processing) 技術涉及調整模型的機率輸出，使預測機率與群體內的實際結果率相匹配？","answer":"分數校準 (Score Calibration)。"},{"id":7,"question":"根據 Kreante 指南，為什麼在招聘或貸款等受監管領域使用「特定群體門檻」的後處理方式具有法律風險？","answer":"這可能違反美國《民權法案》第七章或《平等信用機會法》，構成差別性處遇。"},{"id":8,"question":"在公平性指標中，「統計平等」(Statistical Parity) 的核心定義為何？","answer":"確保不同受保護群體獲得正面預測結果的比例相等。"},{"id":9,"question":"「相等機率」(Equalized Odds) 指標要求在不同群體之間，必須同時達到哪兩種率的平等？","answer":"真陽性率 (TPR) 與偽陽性率 (FPR)。"},{"id":10,"question":"為何「校準」(Calibration) 與「相等機率」(Equalized Odds) 在數學上往往無法同時滿足？","answer":"當不同群體的基礎率 (Base Rates) 存在差異時，這兩者在數學上互斥。"},{"id":11,"question":"在 TEVV 工作流程中，術語 \"V\" (Validation) 代表什麼意義？","answer":"驗證模型在進入暫存環境前是否符合公平性與效能指標。"},{"id":12,"question":"在資料審計中，什麼是「非隨機缺失」(Non-random missingness) 的潛在風險？","answer":"數據在特定子群體中缺失更頻繁，若用整體平均值填補會系統性低估該群體的真實值。"},{"id":13,"question":"哪一種緩解技術會訓練一個輔助模型，試圖從主模型的表示中預測受保護屬性，並對此進行懲罰？","answer":"對抗性去偏 (Adversarial Debiasing)。"},{"id":14,"question":"根據 CFPB Circular 2023-03，金融機構在提供「不利處分通知」時，不能僅依賴什麼？","answer":"Regulation B 附錄 C 中的標準檢查表範本。"},{"id":15,"question":"在金融信用審核中，「代理變數」(Proxy Variables) 的主要危害為何？","answer":"即使移除敏感特徵，非敏感特徵（如郵遞區號）仍能重建申請人的受保護屬性。"},{"id":16,"question":"Upstart 案例中，模型將「畢業院校」與平均 SAT 成績關聯，導致特定族裔院校畢業生受損，這被稱為什麼現象？","answer":"教育紅線 (Educational Redlining)。"},{"id":17,"question":"歐盟《人工智慧法案》將用於信用評級的 AI 系統歸類為哪一種風險等級？","answer":"高風險 AI 系統 (High-Risk AI Systems)。"},{"id":18,"question":"歐盟《人工智慧法案》規定，高風險 AI 系統的日誌紀錄 (Logs) 應至少保存多久？","answer":"至少 6 個月。"},{"id":19,"question":"在 Apple Card 調查中，儘管統計上未發現違規，但哪一方面的缺陷導致了公眾信任危機？","answer":"客戶服務缺乏解釋 AI 評分邏輯的能力（可解釋性崩潰）。"},{"id":20,"question":"「羅生門效應」(Rashomon Effect) 在演算法公平性研究中代表什麼含義？","answer":"存在多個準確度幾乎相等但內部結構不同的模型，其中某些模型的偏差可能較小。"},{"id":21,"question":"什麼是「級聯演算法偏差」(Cascading Algorithmic Bias)？","answer":"一個系統的偏見輸出成為另一個系統的輸入，導致歧視效應被放大。"},{"id":22,"question":"在美國勞工法律中，「四分之五法則」(4/5 Rule) 用於判斷什麼？","answer":"判斷不同群體間的選拔率是否存在實質性差異，以識別潛在的差別性影響。"},{"id":23,"question":"哪一種統計方法常被用於在缺乏人口統計數據時，推估個體的種族與族裔？","answer":"貝氏改進姓氏地理編碼法 (BISG)。"},{"id":24,"question":"根據 Kreante 的建議，當模型信心低於定義門檻或涉及受監管的受保護群體時，應採取什麼機制？","answer":"人工干預或覆核機制 (Human-in-the-loop)。"},{"id":25,"question":"在無監督學習中，偏差通常如何表現？","answer":"嵌入模型（如單詞嵌入）在其幾何結構中編碼職業或性別刻板印象。"},{"id":26,"question":"哪種 AI 框架要求在追求自動化效率的同時，必須確保決策軌跡具備追溯性？","answer":"歐盟《人工智慧法案》高風險治理體系。"},{"id":27,"question":"在金融授信中，「反對事實測試」(Counterfactual Testing) 的目的是什麼？","answer":"通過邊際調整單一特徵，驗證模型輸出是否翻轉，以確認拒絕理由的真實性。"},{"id":28,"question":"根據 CFPB 指引，若 AI 模型因申請人的「職業選擇」而拒絕貸款，機構必須揭露什麼？","answer":"真實且具體的因素，而非模糊的「收入不足」。"},{"id":29,"question":"歐盟《人工智慧法案》規定，違反高風險 AI 系統合規義務的最高罰鍰為何？","answer":"1,500 萬歐元或全球年度總營業額的 $3\\%$。"},{"id":30,"question":"什麼是「數據血統追蹤」(Data Lineage Traceability)？","answer":"確認所有替代性數據（如支付紀錄）具備明確定義與來源紀錄，以消除代理變數。"},{"id":31,"question":"在強化學習 (RL) 中，偏差最容易從哪個部分進入系統？","answer":"獎勵函數 (Reward Function) 的設計。"},{"id":32,"question":"哪一種指標衡量的是：改變受保護屬性後，模型的預測結果是否保持不變？","answer":"反事實公平性 (Counterfactual Fairness)。"},{"id":33,"question":"「個體公平性」(Individual Fairness) 的基本要求為何？","answer":"相似的個體應獲得相似的預測結果。"},{"id":34,"question":"在預處理階段，如果某個受保護子群體的樣本嚴重不足，通常會採取什麼措施？","answer":"目標過度抽樣 (Targeted Oversampling)。"},{"id":35,"question":"什麼是「標籤裁定協議」(Label Adjudication Protocols)？","answer":"當多個標註者意見分歧時，使用的結構化處理方式，分歧本身往往標記了偏差易發點。"},{"id":36,"question":"為何僅依靠移除特徵（盲性公平）不足以消除偏差？","answer":"因為其他特徵可能與被移除的敏感屬性高度相關，成為其代理指標。"},{"id":37,"question":"在金融審計中，「差別性影響」(Disparate Impact) 與「差別性處遇」(Disparate Treatment) 的主要區別為何？","answer":"前者指無意但造成不平等後果的實踐，後者指有意的歧視性行為。"},{"id":38,"question":"Meta 案例中，為了減少廣告投放中的人口統計偏斜，開發了哪種系統？","answer":"變異數減少系統 (Variance Reduction System)。"},{"id":39,"question":"哪一個開源程式庫涵蓋了預處理、中處理與後處理的全生命週期演算法？","answer":"IBM AI Fairness 360 (AIF360)。"},{"id":40,"question":"Microsoft Fairlearn 程式庫的主要優點為何？","answer":"提供約束型 API 與儀表板，可方便地比較不同模型變體的公平性指標。"},{"id":41,"question":"Google What-If Tool 主要服務於哪種分析目的？","answer":"無需程式碼的視覺化探討，用於分析模型在不同子群體中的行為。"},{"id":42,"question":"在部署後的監控中，「數據漂移」(Data Drift) 告警通常在哪種情況下觸發？","answer":"當輸入特徵的分佈偏離訓練數據的分佈超過定義門檻時。"},{"id":43,"question":"根據 2025 年的 Nature 研究，哪種後部署機制對於檢測長期偏差至關重要？","answer":"持續性的最終用戶回饋循環 (End-user feedback loops)。"},{"id":44,"question":"在實施偏差緩解計劃時，模型開發團隊與法律團隊應共同簽署什麼文件？","answer":"模型卡 (Model Card)，詳述公平性決策、指標權衡與已知限制。"},{"id":45,"question":"什麼是「自動化平庸」(Automation Complacency)？","answer":"審核人員過度依賴模型建議，即使模型出錯也傾向於批准，這在醫療或法律情境中尤為嚴重。"},{"id":46,"question":"在金融 AI 監管中，「商業必要性」(Business Necessity) 防禦何時適用？","answer":"當某項具備差別性影響的特徵對商業目標不可或缺，且無更少歧視的替代方案時。"},{"id":47,"question":"Rite Aid 案例中，聯邦貿易委員會 (FTC) 對其臉部辨識技術的處置為何？","answer":"禁止 Rite Aid 使用臉部辨識 AI 五年。"},{"id":48,"question":"在美國，《房屋抵押貸款揭露法》(HMDA) 如何幫助演算法調查？","answer":"強制貸方報告數據，讓監管機構與公眾能分析是否存在種族歧視模式。"},{"id":49,"question":"什麼是「信息障礙」(Information Barriers) 對 AI 審計的影響？","answer":"審計者無法獲取完整的訓練數據或模型代碼，導致難以重建決策過程。"},{"id":50,"question":"在 Kreante 的生命週期指南中，TEVV 代表的四個步驟分別是什麼？","answer":"測試 (Testing)、評估 (Evaluation)、驗證 (Validation)、核實 (Verification)。"},{"id":51,"question":"如果一個系統展示出「公平的紙上數據」，但在實際應用中失效，最常見的原因是什麼？","answer":"治理缺口，即缺乏監控基礎設施來檢測現實世界與測試數據的背離。"},{"id":52,"question":"在進行合成數據增強時，必須注意哪一點以防偏差？","answer":"合成數據會複製生成模型本身的偏差，必須用真實的子群體數據進行驗證。"},{"id":53,"question":"「群體特定門檻」(Group-specific thresholds) 在美國法律中通常被視為哪種性質？","answer":"顯性處遇歧視 (Disparate Treatment)。"},{"id":54,"question":"哪項法規是美國金融授信公平性的核心，明文禁止基於種族或性別的信用歧視？","answer":"平等信用機會法 (ECOA)。"},{"id":55,"question":"根據歐盟《人工智慧法案》，哪些類型的 AI 系統被直接禁止（Prohibited）而非僅是高風險？","answer":"在公共空間進行實時遠程生物特徵識別以用於執法（特定例外除外）。"},{"id":56,"question":"在金融授信模型中，移除「畢業院校」並引入「歸一化」機制是為了修正什麼？","answer":"修正少數族裔服務機構 (MSI) 與傳統名校之間的系統性得分差距。"},{"id":57,"question":"為什麼「參與式設計」(Participatory Design) 能有效緩解偏差？","answer":"受影響群體參與定義「公平」的標準，能發現內部開發團隊容易忽略的失效模式。"},{"id":58,"question":"在偏差緩解的權衡中，增加公平性約束通常會導致什麼代價？","answer":"預測準確度 (Accuracy) 的下降。"},{"id":59,"question":"什麼是「數據字典」或「數據集卡」(Dataset Card) 的核心內容？","answer":"記錄數據來源、收集方法、受保護屬性分佈及已知的限制。"},{"id":60,"question":"針對高風險 AI 系統，歐盟要求部署者在投入運作前必須完成什麼評估？","answer":"基本權利影響評估 (FRIA)。"},{"id":61,"question":"在 CFPB 的視角下，複雜演算法的「黑箱特性」能否作為無法提供具體理由的藉口？","answer":"不能，機構仍有法律義務提供具體且精準的原因。"},{"id":62,"question":"當模型使用「消費行為」數據進行帳戶凍結時，可能產生哪種非預期的後果？","answer":"過度擬合產生的隱性偏差放大，例如因在特定零售店購物而被扣分。"},{"id":63,"question":"什麼是「紅隊演練」(Red-teaming) 在 AI 公平性中的應用？","answer":"由外部專家進行結構化的攻擊性測試，以尋找模型的弱點與潛在歧視路徑。"},{"id":64,"question":"對於低風險系統，Kreante 建議如何開始緩解偏差？","answer":"從後處理校準與監控開始，隨後再向數據管道上游追溯。"},{"id":65,"question":"什麼是「敏感性分析」(Sensitivity Analysis) 在公平性審計中的作用？","answer":"測試模型輸出對特定受保護屬性變動的敏感程度。"},{"id":66,"question":"在處理「非隨機缺失」數據時，哪種做法優於直接用均值填補？","answer":"針對不同群體分別分析缺失模式，或使用更複雜的插值方法。"},{"id":67,"question":"對於 NLP 模型，Winogender 數據集主要用來測試什麼偏差？","answer":"性別代詞關聯偏差 (Gender Coreference Bias)。"},{"id":68,"question":"根據 Skadden 的分析，CFPB 的 Circular 2023-03 顯示監管機構對哪種數據特別關注？","answer":"從「消費者監視」(Consumer Surveillance) 獲取的數據。"},{"id":69,"question":"歐盟《人工智慧法案》中，Annex III 涵蓋的八大高風險領域包括哪些？","answer":"教育、就業、關鍵基礎設施、司法管理、公共服務、移民等。"},{"id":70,"question":"為何「公平性指標」被稱為政策決定而非純技術決定？","answer":"因為選擇優化哪一種指標（如統計平等或相等機率）涉及對社會正義的不同定義。"},{"id":71,"question":"在 AI 公平性治理中，「模型所有者」(Model Owner) 的首要職責是什麼？","answer":"對公平性結果負責，而不僅僅是模型效能。"},{"id":72,"question":"在 Apple Card 調查報告中，提到「附屬卡用戶」(Authorized User) 制度如何導致額度差異？","answer":"附屬卡用戶的獨立信用紀錄長度不足，即使其配偶信用良好，系統仍會判定其信用歷史過短。"},{"id":73,"question":"什麼是「隱性偏差放大」(Implicit Bias Amplification)？","answer":"即使排除單一敏感變數，多維特徵的非線性組合仍能以極高精度重建敏感屬性並放大歧視。"},{"id":74,"question":"在 CFPB 2022-03 通告中，明確了哪項關於演算法透明度的要求？","answer":"即使是複雜算法，債權人也必須向消費者提供拒絕貸款的「具體且精準的主要原因」。"},{"id":75,"question":"哪一項法律原則主張：法律應積極拆解群體層級體制，即使需要考慮受保護階級身份？","answer":"反從屬原則 (Anti-subordination)。"},{"id":76,"question":"在 AI 偏差治理中，為什麼「溝通無偏」與「演算法無偏」同樣重要？","answer":"即使統計上無歧視，如果客服無法解釋決策逻辑（黑箱運作），仍會摧毀公眾信任並引發監管調查。"},{"id":77,"question":"歐盟《人工智慧法案》中提到的「符合性評估」(Conformity Assessment) 是指什麼？","answer":"提供者在將系統投入市場前，需證明系統符合技術文件、數據治理與安全性要求。"},{"id":78,"question":"在 AI 信用審核中，「水瀑模型」(Waterfalls) 審計的重點為何？","answer":"繪製數據輸入至授信決策的路徑，釐清自動化決策與人工干預的邊界。"},{"id":79,"question":"針對 Meta 住房廣告案，司法部 (DOJ) 施加的罰鍰數額代表了什麼？","answer":"《公平住房法》允許的最高民事罰鍰。"},{"id":80,"question":"對於具有高度非線性特徵的 AI 模型，常用的局部解釋工具包括哪些？","answer":"SHAP 與 LIME。"},{"id":81,"question":"Kreante 指南中提到，哪種情況下應立即觸發「模型回滾」(Rollback)？","answer":"例如：偽陽性率偏差較基準增加 $10\\%$ 時。"},{"id":82,"question":"為什麼「分層抽樣」是緩解偏差的首選技術之一？","answer":"它能在不增加模型複雜度的情況下，確保受保護群體在訓練集中有足夠的代表性。"},{"id":83,"question":"在 CFPB 2023-03 通告中，哪種拒絕理由被認為過於模糊且可能違規？","answer":"「消費歷史過短」或「收入不足」，若實際原因是特定的店鋪消費行為。"},{"id":84,"question":"歐盟《人工智慧法案》規定，部署者在發現高風險 AI 系統存在嚴重事故時，應採取什麼行動？","answer":"立即通知提供者及國家監管機構。"},{"id":85,"question":"在 AI 生命週期的治理中，哪一個角色負責數據集的文件記錄與血統追蹤？","answer":"數據管家 (Data Steward)。"},{"id":86,"question":"在 AI 公平性中，「平等獲取」(Equality of Access) 與「結果平等」(Equality of Outcome) 的區別為何？","answer":"前者關注機會的開放性，後者關注不同群體最終獲得正面結果的比例是否一致。"},{"id":87,"question":"為何「單一指標」在 AI 公平性衡量中是不夠的？","answer":"因為不同指標可能掩蓋不同類型的偏見，例如統計平等可能隱藏極高的錯誤率。"},{"id":88,"question":"在美國，哪一個機構負責執行《公平住房法》，並與 Meta 達成廣告偏差和解？","answer":"司法部 (DOJ) 與 住房及城市發展部 (HUD)。"},{"id":89,"question":"在 AI 偏差緩解的實施計劃中，「設計階段」的核心任務是什麼？","answer":"定義用例範圍、識別相關受保護屬性、選擇公平性指標並設定可接受的權衡門檻。"},{"id":90,"question":"什麼是「偏差應急響應」(Incident Response) 的第一步？","answer":"立即緩解，如套用快速修復（調整門檻）、路由至人工審核或回滾模型版本。"}];
     let currentData = [...RAW_DATA];
     let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
     let currentMode = 'list';
     let filterOnlyUnmastered = false;
     let isAllExpanded = false;
     let cardIndex = 0;
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
 
     function saveMastered() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(masteredSet)));

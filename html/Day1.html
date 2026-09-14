@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,19 +27,17 @@
       --radius: 12px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #0f172a;
-        --card-bg: #1e293b;
-        --text-main: #f8fafc;
-        --text-muted: #94a3b8;
-        --primary: #60a5fa;
-        --primary-hover: #3b82f6;
-        --primary-light: #1e3a8a33;
-        --border-color: #334155;
-        --success: #34d399;
-        --success-light: #064e3b33;
-      }
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
+      --success: #34d399;
+      --success-light: #064e3b33;
     }
 
     * {
@@ -116,6 +114,14 @@
       border: 1px solid var(--border-color);
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
     .toggle-btn {
       padding: 6px 14px;
       border: none;
@@ -132,6 +138,24 @@
       background: var(--card-bg);
       color: var(--primary);
       box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
     /* Main Container */
@@ -497,9 +521,12 @@
         <a href="../index.html" class="back-btn" title="回目錄">← 目錄</a>
         <h1 class="page-title">Day1 問答卡</h1>
       </div>
-      <div class="view-toggles">
-        <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
-        <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+        <div class="view-toggles">
+          <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
+          <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+        </div>
       </div>
     </div>
   </header>
@@ -566,14 +593,40 @@
   </main>
 
   <script>
+    const THEME_STORAGE_KEY = "qa_theme";
     const STORAGE_KEY = "anki_mastered_" + "Day1";
-    const RAW_DATA = [{"id":1,"question":"根據 Gartner 的數據分析框架，哪一種分析類型旨在回答「發生了什麼事？」(What happened?)","answer":"描述性分析 (Descriptive Analysis)"},{"id":2,"question":"在 Gartner 的分析框架中，「診斷性分析」的核心命題是什麼？","answer":"為何會發生？ (Why did it happen?)"},{"id":3,"question":"旨在探討「將來會發生什麼？」(What will happen?) 的數據分析階段稱為 _____。","answer":"預測性分析 (Predictive Analysis)"},{"id":4,"question":"「處方性分析」在商業決策中的主要提問為何？","answer":"我們可以做什麼，來讓未來更符合我們的期待？"},{"id":5,"question":"在分析難度與價值的座標圖中，描述性分析被歸類為「事後覺察」，而診斷性分析則被視為 _____。","answer":"洞見 (Insight)"},{"id":6,"question":"Gartner 框架中，屬於「預見性 (Foresight)」範疇的分析包含預測性分析與 _____。","answer":"處方性分析 (Prescriptive Analysis)"},{"id":7,"question":"進行數據分析之前，必須先將原始數據整理成機器可理解的格式，這種資料稱為 _____。","answer":"結構化資料"},{"id":8,"question":"「假說思考法」的定義是什麼？","answer":"根據過去經驗或目前資訊，提出最接近根本原因的猜想與假說。"},{"id":9,"question":"在診斷性分析中，除了提出「假設」與「理由」，還需要列出什麼來驗證猜想？","answer":"檢驗方式 (可驗證的方式)"},{"id":10,"question":"概念：髒資料 (Dirty Data)","answer":"定義：格式不統一、重複、含有錯誤值或缺失值的原始數據，無法直接進行準確分析。"},{"id":11,"question":"數據清洗情境：將單一欄位內容（如：Taiwan, Taipei）拆分到不同欄位的操作稱為 _____。","answer":"切割 (Split)"},{"id":12,"question":"在數據處理層級中，Level 2 重點在於識別與處理什麼樣的數據？","answer":"非精確匹配的模糊重複數據 (如：Google, Inc. 與 Google LLC)。"},{"id":13,"question":"數據處理 Level 4 階段所強調的「數據管線 (Data Pipeline)」主要目的是什麼？","answer":"建立自動化的數據清洗流程並持續監控數據品質。"},{"id":14,"question":"導致資料雜亂的「系統設計問題」範例之一是：幣別格式從加拿大幣更改為 _____。","answer":"美金計價"},{"id":15,"question":"將「高雄縣」更名為「高雄市」後的資料對應整理，屬於數據清洗中的哪種情境？","answer":"資料欄位格式差異 (或資料定義變更)"},{"id":16,"question":"數據品質的維度除了準確性與一致性外，還包括完整性、唯一性與 _____。","answer":"時效性"},{"id":17,"question":"Tableau Public 版本最大的特色（也是與付費版的主要差異）為何？","answer":"它是完全免費的，但儲存的專案通常是公開的。"},{"id":18,"question":"在數據視覺化領域中，與 Tableau 競爭且同屬領導者地位的微軟工具是 _____。","answer":"Power BI"},{"id":19,"question":"Google 推出的免費雲端數據視覺化與分析工具名稱為何？","answer":"Looker Studio (原稱 Google Data Studio)"},{"id":20,"question":"根據 Northwestern University 的報告，數據分析師必備的七項關鍵技能包含 SQL、Excel、視覺化、數學統計、溝通、批判性思考與 _____。","answer":"程式語言 (R, Python, 或 MATLAB)"},{"id":21,"question":"在 Excel 自動化分析的 Level 3 階段，通常會結合哪種程式語言進行協作？","answer":"Python"},{"id":22,"question":"AI First！Vibe Coding 是指 Excel 自動化應用中的第幾個等級？","answer":"Level 4 (人機協作)"},{"id":23,"question":"進行「大量資料合併」的 AI 自動化技巧中，最關鍵的操作是比對什麼？","answer":"跨表的關聯資料 (如訂單編號對接客戶姓名)。"},{"id":24,"question":"請求 AI 分析樞紐分析表時，Prompt 應要求 AI 整理出「觀察重點」、「支持數字」、以及「可以怎麼說」與哪項關鍵資訊？","answer":"目前不能推論什麼"},{"id":25,"question":"在視覺化原則中，為了呈現主要資訊，Before/After 的建議做法是將資訊從灰色改為 _____。","answer":"亮色 (或鮮豔色彩)"},{"id":26,"question":"「WTF Visualizations」網站收集圖表的目的是為了警示什麼？","answer":"避免製作邏輯不通或誤導讀者的無意義圖表。"},{"id":27,"question":"Excel 函數常用於資料彙整，若要計算特定縣市在某月份的受傷人數，應提供 AI 哪些資訊來生成公式？","answer":"Excel 欄位名稱與前三筆資料的範例長相。"},{"id":28,"question":"數據分析過程中，哪一種分析通常需要建立模型 (Model) 或撰寫 Python 程式？","answer":"預測性分析 (及處方性分析)"},{"id":29,"question":"當數據處理邏輯不再只是單純的 $if\\ p\\ then\\ q$ 時，Level 2 處理重複值需要運用什麼演算法？","answer":"字串相似度演算法"},{"id":30,"question":"描述性統計中常用的數值除了平值數外，還包含最大值、最小值與 _____。","answer":"中位數 (或標準差等統計量)"},{"id":31,"question":"在進行數據分析提問前，建議先開啟 _____ 的對話空間，以避免不同主題干擾 AI 邏輯。","answer":"新 (New Chat)"},{"id":32,"question":"診斷性分析中，若發現特定時段事故死亡率偏高，除了疲勞駕駛外，另一種常見的生理性假設為何？","answer":"酒後駕駛 (酒駕)"},{"id":33,"question":"在數據處理中，處理明顯錯誤與統一格式屬於 Level 1 的 _____。","answer":"基礎資料處理 (初步清理)"},{"id":34,"question":"自動化分析 Level 2 階段，除了大量資料合併，另一項常見的 AI 自動化技巧是自動比對 _____。","answer":"付款 (對帳)"},{"id":35,"question":"製作視覺化圖表時，如果想要顯示趨勢變化，通常應選擇線圖還是長條圖？","answer":"線圖 (Line Chart)"},{"id":36,"question":"數據分析流程中，從「提問、準備、處理」到「分析、分享」，最後一個關鍵步驟是 _____。","answer":"行動 (Action)"},{"id":37,"question":"當我們使用 AI 寫分析報告時，應在 Prompt 中指定生成的檔案格式為 _____。","answer":"Word 檔 (或 .docx)"},{"id":38,"question":"分析 A1 事故數據時，若高雄市事故件數最多，卻不能直接說高雄「最危險」，其原因為何？","answer":"尚未考慮人口數、車流量、道路長度等暴露量基準 (Exposure)。"},{"id":39,"question":"在假說思考法中，針對「凌晨事故死亡風險高」提出的環境假設可能是因為道路較 _____，導致車速較高。","answer":"空曠"},{"id":40,"question":"「資料欄位名稱、前三筆資料長相」是請求 AI 輔助分析時必須提供的 _____ 資訊。","answer":"上下文 (Context) 或 Prompt 基礎"},{"id":41,"question":"哪一項數據分析師技能強調「不輕易盲從圖表表面資訊，能發現隱藏問題」？","answer":"批判性思考 (Critical Thinking)"},{"id":42,"question":"數據清洗情境：將幣別符號與數值分離，以便進行數學運算，這屬於清洗中的什麼步驟？","answer":"格式統一化或欄位拆分"},{"id":43,"question":"根據教材，目前主流的商業智慧 (BI) 領導工具前三名分別為 Microsoft、Tableau 與 _____。","answer":"Google (Looker)"},{"id":44,"question":"在數據視覺化中，使用亮色突顯主要資訊，是為了引導讀者的 _____。","answer":"視覺焦點 (或注意力)"},{"id":45,"question":"「預測性分析」關注的是 Foresight，而「描述性分析」關注的是 _____。","answer":"Hindsight (事後覺察)"},{"id":46,"question":"AI 自動化分析 Level 3 的「分析模型建構」，其主要價值在於提升預測的 _____。","answer":"準確性 (或精準度)"},{"id":47,"question":"當數據來自多個平台且日期格式不一時（如：2023/1/1 與 106/1/1），清洗的首要任務是 _____。","answer":"格式統一化"},{"id":48,"question":"在 Excel 樞紐分析中，將資料依據「發生縣市」和「受傷人數」進行整合，是為了進行不同 _____ 的觀察。","answer":"維度 (Dimensions)"},{"id":49,"question":"批判性思考在數據分析中的重要性，在於能夠發現 AI 難以驗證的 _____。","answer":"邏輯問題或數據偏差"},{"id":50,"question":"利用 AI 生成 1500 字報告時，Prompt 中應包含「質化論述、行動方案、分析背景」與什麼核心分析？","answer":"描述性分析與診斷性分析"},{"id":51,"question":"在診斷分析案例中，若要檢驗「酒駕」假設，需要連結外部的什麼資料？","answer":"酒測資料或警方事故原因分類。"},{"id":52,"question":"描述性分析的極限在於它只能告訴我們現象，無法告訴我們 _____。","answer":"原因 (或為什麼)"},{"id":53,"question":"Level 3 異常值偵測的分析前提，是需要有清晰的 _____ 和數據標準。","answer":"業務規則 (Business Rules)"},{"id":54,"question":"視覺化工具的選擇上，Tableau 被認為風格較優美，而 Power BI 常被部分使用者認為風格較為 _____。","answer":"陽春 (或陽剛、商務)"},{"id":55,"question":"進行數據分析的「行動 (Action)」步驟，通常對應到 Gartner 框架中的哪種分析？","answer":"處方性分析 (Prescriptive Analysis)"}];
+    const RAW_DATA = [{"id":1,"question":"根據 K2view 的定義，何謂「AI 資料隱私」？","answer":"為保護 AI 應用程式、框架和模型所收集、存儲和處理的敏感資料而採取的安全措施。"},{"id":2,"question":"生成式 AI（GenAI）為金融機構分析海量資料時帶來的主要優勢為何？","answer":"能自動化複雜任務並透過個人化與效率提升客戶體驗。"},{"id":3,"question":"金融服務提供商在處理 AI 資料時，必須遵守哪些主要的資料隱私法律？","answer":"包括 CPRA、GDPR 和 HIPAA 等法律。"},{"id":4,"question":"在金融業的 AI 資料隱私風險中，「繞過標準安全協議」的威脅稱為什麼？","answer":"越獄（Jailbreaking）或提示注入（Prompt Injection）。"},{"id":5,"question":"金融機構若發生 AI 模型漏洞，可能會導致什麼敏感資訊外洩？","answer":"模型內部的敏感訓練資料。"},{"id":6,"question":"在 AI 資料隱私策略中，「資料加密」的主要用途為何？","answer":"掩蓋靜態或傳輸中的敏感資料。"},{"id":7,"question":"「存取控制」在 AI 資料隱私策略中扮演什麼角色？","answer":"確保只有獲得授權的使用者才能查看或修改個人識別資訊（PII）。"},{"id":8,"question":"在訓練和生產資料集中隱藏個人識別碼的技術稱為什麼？","answer":"資料遮罩（Data Masking）。"},{"id":9,"question":"「對抗性策略」（Adversarial strategizing）的目的是什麼？","answer":"保護 AI 模型免受惡意攻擊。"},{"id":10,"question":"「資料最小化」（Data minimization）原則的核心為何？","answer":"僅存儲真正需要的資料。"},{"id":11,"question":"檢索增強生成（RAG）框架如何提升 LLM 的回應品質？","answer":"透過將受信任的企業資料注入 LLM，實現更精確且具上下文關聯的回應。"},{"id":12,"question":"RAG 聊天機器人在金融客戶服務中的主要效益為何？","answer":"減少通話時間並增加客戶滿意度。"},{"id":13,"question":"主動式檢索增強生成在金融業「欺詐檢測」方面的運作方式為何？","answer":"即時分析交易模式並標記可能代表欺詐行為的異常活動。"},{"id":14,"question":"為什麼傳統的中央資料湖不適合用於存放生成式 AI 資料？","answer":"因為它包含易洩漏的敏感資訊，且清理與查詢成本高昂。"},{"id":15,"question":"微型資料庫（Micro-Database）技術如何處理個別實體的資料？","answer":"為每位客戶、員工或產品創建微型資料湖，並與源系統持續同步。"},{"id":16,"question":"微型資料庫如何確保 AI 資料的品質與隱私？","answer":"自動執行資料隱私規則並應用 AI 資料品質標準。"},{"id":17,"question":"金管會於 2024 年發布的哪份文件顯示了對 AI 應用資料治理的重視？","answer":"《金融業運用人工智慧（AI）指引》。"},{"id":18,"question":"目前金融機構將資料「去識別化」以符合個資法要求面臨的主要痛點為何？","answer":"目前缺乏明確且客觀的去識別化程度標準。"},{"id":19,"question":"即使採用聯合學習（Federated Learning）產生參數，仍存在什麼樣的法規隱憂？","answer":"仍被認為可能存在資料再識別風險的疑慮。"},{"id":20,"question":"關於 AI 模型訓練產出的「衍生資料」，目前的爭議點為何？","answer":"其權利歸屬難以界定，消費者是否能要求剔除其相關資料尚無定論。"},{"id":21,"question":"在金融 AI 應用中，「遷移學習」（Transfer Learning）技術引發了什麼爭議？","answer":"資料利用目的範圍的爭議，例如將公益目的訓練的模型轉用於商業行銷。"},{"id":22,"question":"金融機構面對 AI 監理法規落後技術發展時應採取什麼思維？","answer":"應轉變為積極主動的風險管理，建立內部管理機制。"},{"id":23,"question":"AI 系統在處理大量敏感資料時，必須確保符合哪兩大核心要素？","answer":"隱私保護與監理合規。"},{"id":24,"question":"歐盟的 GDPR 要求企業在處理個人資料時必須遵守哪些原則？","answer":"透明性、資料最小化及維護資料主體權利。"},{"id":25,"question":"PCI DSS 標準主要關注金融業的哪類資料安全？","answer":"支付卡資料安全環境。"},{"id":26,"question":"巴塞爾協議 III（Basel III）在資料治理方面強調了什麼需求？","answer":"有效的風險資料聚合與風險管理實踐。"},{"id":27,"question":"AI 合規性中「黑箱」性質（Black box）指的是什麼挑戰？","answer":"決策過程難以理解與解釋，可能導致公眾不信任。"},{"id":28,"question":"「演算法問責制」（Algorithmic accountability）包含哪些具體流程？","answer":"評估並減輕 AI 系統中可能產生的潛在偏誤。"},{"id":29,"question":"為什麼 AI 系統需要建立「問責機制」來處理錯誤決策？","answer":"因為當 AI 造成損害時，確定責任歸屬（設計者或使用者）過程極為複雜。"},{"id":30,"question":"歐盟提出的《人工智慧法案》（Artificial Intelligence Act）如何分類 AI 系統？","answer":"根據 AI 對基本權利的潛在影響和風險進行分級管理。"},{"id":31,"question":"造成演算法偏誤（Algorithmic bias）的主要原因是什麼？","answer":"訓練資料集中包含固有的社會偏見，並在自動化決策中被放大。"},{"id":32,"question":"減輕演算法偏誤的關鍵策略之一為何？","answer":"實現訓練資料的多樣化並定期進行公平性審計。"},{"id":33,"question":"AI 廣泛採用對金融業低技能職位可能造成的社會衝擊為何？","answer":"可能導致工作職位的消失。"},{"id":34,"question":"差異隱私（Differential Privacy）的主要數學目的是什麼？","answer":"平衡量化的披露風險與資料分析的有用性（Utility）。"},{"id":35,"question":"在差異隱私中，鄰近資料集（Neighboring Datasets）的定義為何？","answer":"兩者之間僅存在一個隱私單位（Privacy Unit）差異的資料集對。"},{"id":36,"question":"差異隱私（DP）中的參數 $\\epsilon$ 代表什麼意義？","answer":"它代表隱私損失預算（Privacy-loss budget），控制相鄰資料集輸出分佈的區分程度。"},{"id":37,"question":"差異隱私的「後處理」（Post-processing）性質保證了什麼？","answer":"一旦結果受到 DP 保護，任何進一步處理都不能降低其隱私保證。"},{"id":38,"question":"「成員攻擊」（Membership attack）的具體目標為何？","answer":"確定特定個人的資料是否被包含在某個資料集中。"},{"id":39,"question":"在差異隱私的假設檢定框架中，第一型錯誤（Type I error）代表什麼？","answer":"攻擊者錯誤地推斷某人屬於資料集成員（偽陽性）。"},{"id":40,"question":"在差異隱私的假設檢定框架中，第二型錯誤（Type II error）代表什麼？","answer":"攻擊者未能檢測到資料集中確實存在的成員（偽陰性）。"},{"id":41,"question":"ROC 曲線在差異隱私評估中是用來顯示什麼關係？","answer":"測試功效（$1 - \\beta$）與偽陽性率（$\\alpha$）之間的權衡。"},{"id":42,"question":"拉普拉斯機制（Laplace mechanism）如何實現差異隱私？","answer":"透過在查詢結果中添加符合拉普拉斯分佈的隨機雜訊。"},{"id":43,"question":"高斯機制（Gaussian mechanism）與拉普拉斯機制在隱私保證上的主要區別為何？","answer":"高斯機制不滿足純粹的 $\\epsilon$-差異隱私，而是滿足近似差異隱私或 $f$-DP。"},{"id":44,"question":"在貝氏統計中，「先驗機率」（Prior probability）的意義為何？","answer":"在進行統計檢定之前，假設目標屬於資料集的機率。"},{"id":45,"question":"何謂「冒然披露」（Blatant disclosure）？","answer":"攻擊者的後驗機率達到 $1$，即以 $100\\%$ 確定性識別出個體。"},{"id":46,"question":"「災難性失敗」（Catastrophic failure）在隨機機制中如何定義？","answer":"指該機制允許通過成員攻擊以確定性揭露敏感屬性。"},{"id":47,"question":"均勻隨機抽樣機制（Uniform Random Sampling）為什麼容易發生災難性失敗？","answer":"因為它有正機率直接洩漏資料集中的原始記錄。"},{"id":48,"question":"「優雅失敗」（Graceful failure）的隨機機制具有什麼特點？","answer":"攻擊者的後驗信心可以接近但永遠無法達到 $1$，始終保持殘餘不確定性。"},{"id":49,"question":"「相對披露風險」（Relative disclosure risk）測量的核心指標為何？","answer":"衡量因發布查詢結果而導致目標成員身分機率增加的倍數。"},{"id":50,"question":"根據定理 2，隨機機制擁有「有限相對披露風險」的條件為何？","answer":"當 $\\alpha \\to 0$ 時，比率 $\\frac{1 - f_\\mu(\\alpha)}{\\alpha}$ 必須收斂至有限值。"},{"id":51,"question":"純粹 $\\epsilon$-差異隱私機制與相對披露風險 $\\rho$ 的關係為何？","answer":"其相對披露風險滿足 $\\rho \\le e^\\epsilon$。"},{"id":52,"question":"在資料分析中，差異隱私產生的擾動可以被視為哪種性質的來源？","answer":"一種精確指定的「測量誤差」或統計不確定性。"},{"id":53,"question":"為什麼差異隱私保護機制和參數值的透明公開不會損害隱私？","answer":"因為 DP 的數學保證對演算法透明度具有魯棒性（防範未來技術進步）。"},{"id":54,"question":"在管理隱私與效用權衡時，「隱私優先」（Privacy-first）策略的步驟為何？","answer":"先定義最大可接受風險並選定隱私參數，再評估資料產出的效用是否足夠。"},{"id":55,"question":"在管理隱私與效用權衡時，「效用優先」（Utility-first）策略的步驟為何？","answer":"先評估分析所需的最小準確度，再確定相應隱私保護所帶來的最低風險。"},{"id":56,"question":"針對不信任的資料接收者，專家強烈建議避免使用哪種失敗類型的機制？","answer":"災難性失敗機制。"},{"id":57,"question":"如果數據接收者是受法律約束的信任人員（如公務員），什麼情況下可接受冒然披露？","answer":"當資料接收者的範圍受控且發布是為了公共政策目的時。"},{"id":58,"question":"在實踐中，效用分析應如何避免額外的披露風險？","answer":"應在不接觸實際數據的情況下，模擬實驗性研究來進行。"},{"id":59,"question":"「合成資料生成」在效用分析中扮演什麼角色？","answer":"讓接收者在不接觸原件的情況下，測試不同隱私參數對分析結果的影響。"},{"id":60,"question":"差異隱私中的「組合成」（Composition）屬性有何作用？","answer":"允許跨多個演算法自動累計並計算總隱私損失。"},{"id":61,"question":"為何「資料最小化」在 AI 模型開發中尤為重要？","answer":"減少攻擊面並降低違反 GDPR 等法規的法律風險。"},{"id":62,"question":"RAG 技術如何解決金融 AI 應用中的「幻覺」問題？","answer":"透過將 LLM 錨定（Grounding）在受信任的企業數據上，提高回應準確性。"},{"id":63,"question":"「推論風險」（Inference risk）與一般的披露風險有何區別？","answer":"它指即使個人資料未直接參與資料集，敏感資訊仍可能被推斷出的風險。"},{"id":64,"question":"為什麼絕對匿名化（Absolute anonymization）在現代數據環境下被視為「破碎的承諾」？","answer":"因為重構與連結攻擊已證明傳統去識別化技術（如聚合、k-匿名）存在漏洞。"},{"id":65,"question":"在 $f$-差異隱私中，權衡函數 $f_\\mu$ 的作用為何？","answer":"它定義了攻擊者在區分兩個鄰近資料集時所面臨的最小錯誤界限。"},{"id":66,"question":"根據 Source 4，為什麼 AUC 面積不是評估隱私保護的理想指標？","answer":"因為它無法捕捉到可能發生的局部「災難性失敗」。"},{"id":67,"question":"「對抗性測試」在 AI 資料安全生命週期中的作用為何？","answer":"識別並修補模型中可能導致敏感訓練數據洩漏的漏洞。"},{"id":68,"question":"遷移學習引發的資料用途爭議，主要違反了資料治理中的哪項原則？","answer":"目的限制原則（Purpose Limitation）。"},{"id":69,"question":"差異隱私如何處理「輔助資訊」（Auxiliary information）帶來的威脅？","answer":"其數學框架保證了即使攻擊者擁有外部知識，隱私洩漏量依然受控。"},{"id":70,"question":"在金融業實施 RAG 時，微型資料庫如何解決「實時性」挑戰？","answer":"透過與源系統持續同步，確保 AI 獲得的是最新且合規的實體資料。"},{"id":71,"question":"何謂「資料主權」（Data sovereignty）的社會契約視角？","answer":"重新思考個體對其生成行為資料的所有權與使用決定權。"},{"id":72,"question":"為什麼 Z-檢定在差異隱私效用分析中是常見的工具？","answer":"用於評估添加 DP 雜訊後的樣本平均值是否仍具統計顯著性。"},{"id":73,"question":"Five Safes 治理框架主要評估資料發布的哪五個維度？","answer":"安全的人、安全的研究、安全的設定、安全的數據、安全的產出。"},{"id":74,"question":"差異隱私的「隱私損失參數」如何與「統計顯著性」連結？","answer":"透過計算不同隱私強度下檢定功效（Power）的下降程度來連結。"},{"id":75,"question":"為何「數據質量」對 AI 資料治理至關重要？","answer":"因為低質量的偏誤數據會導致 AI 模型產生歧視性或錯誤的財務決策。"},{"id":76,"question":"「聯合學習」（Federated Learning）在醫療大數據分析中的優點為何？","answer":"允許在不共享原始數據的情況下進行模型訓練，提升數位轉型。"},{"id":77,"question":"差異隱私如何幫助減少金融機構的「商譽損害」風險？","answer":"透過嚴格限制數據洩漏的可能性，維持客戶的信任與忠誠度。"},{"id":78,"question":"「去識別化」技術在法律上目前面臨的最大辯論為何？","answer":"關於去識別化後的資料是否仍屬於「個人資料」範疇的認定。"},{"id":79,"question":"差異隱私框架下的「成員推論攻擊」與「重構攻擊」有何異同？","answer":"兩者皆旨在竊取資訊，但成員推論關注「存在性」，重構關注「具體數值」。"},{"id":80,"question":"對於金融從業者而言，「微型資料庫」如何改變大規模個人化的成本？","answer":"它允許在保持嚴格安全措施的同時，以業務規模和速度提供個人化服務。"},{"id":81,"question":"在 AI 治理中，「人類監督」（Human oversight）的主要職責為何？","answer":"確保 AI 決策過程不違反公平性原則且在出錯時能及時介入。"},{"id":82,"question":"為什麼歐盟的 5AMLD 指令對 AI 資料治理有影響？","answer":"它要求金融機構使用進階監控系統來檢測非法資金流動並確保數據保護。"},{"id":83,"question":"何謂 AI 時代的「代理經濟」（Agentic AI）？","answer":"指 AI 代理（Agents）加速融入企業營運核心並代表用戶執行決策的趨勢。"},{"id":84,"question":"差異隱私技術中的「雜訊校準」（Noise calibration）目的是什麼？","answer":"根據查詢的敏感度和隱私預算，確定需要添加的最優雜訊量。"},{"id":85,"question":"在處理多個假設檢定時，為何需使用「龐費洛尼校正」（Bonferroni correction）？","answer":"為了控制因多次檢定而增加的偽陽性（第一型錯誤）累積機率。"}];
     let currentData = [...RAW_DATA];
     let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
     let currentMode = 'list';
     let filterOnlyUnmastered = false;
     let isAllExpanded = false;
     let cardIndex = 0;
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
 
     function saveMastered() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(masteredSet)));
