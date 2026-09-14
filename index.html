@@ -5,66 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>30天數據思維實戰問答總目錄</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     :root {
       --bg-color: #f8fafc;
-      --card-bg: #ffffff;
       --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --primary-light: #eff6ff;
-      --border-color: #e2e8f0;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
-      --radius: 12px;
+      --text-muted: #475569;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --border-color: #cbd5e1;
+      --button-text: #ffffff;
+      --shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+      --shadow-hover: 0 10px 22px rgba(37, 99, 235, 0.28);
     }
 
     html[data-theme="dark"] {
       --bg-color: #0f172a;
-      --card-bg: #1e293b;
       --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --text-muted: #cbd5e1;
       --primary: #60a5fa;
       --primary-hover: #3b82f6;
-      --primary-light: #1e3a8a33;
       --border-color: #334155;
+      --button-text: #0f172a;
+      --shadow: 0 8px 18px rgba(96, 165, 250, 0.18);
+      --shadow-hover: 0 10px 22px rgba(96, 165, 250, 0.24);
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: var(--bg-color);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      background: var(--bg-color);
       color: var(--text-main);
-      padding: 40px 20px;
+      line-height: 1.6;
     }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .header-section {
+    main {
+      width: min(100%, 680px);
       text-align: center;
-      margin-bottom: 40px;
     }
 
     .top-actions {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 20px;
+      position: fixed;
+      top: 18px;
+      right: 18px;
     }
 
     .theme-toggle {
       padding: 7px 12px;
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      background: var(--card-bg);
+      background: var(--bg-color);
       color: var(--text-main);
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: var(--shadow-sm);
       transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
 
@@ -73,136 +74,71 @@
       color: var(--primary);
     }
 
-    .header-section h1 {
-      font-size: 2rem;
-      margin-bottom: 10px;
+    .eyebrow {
+      margin-bottom: 12px;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin-bottom: 14px;
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      line-height: 1.15;
       font-weight: 800;
     }
 
-    .header-section p {
+    p {
+      margin: 0 auto 28px;
+      max-width: 520px;
       color: var(--text-muted);
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .index-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 24px;
+    a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: var(--button-text);
+      font-weight: 700;
       text-decoration: none;
-      color: inherit;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      box-shadow: var(--shadow);
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
     }
 
-    .index-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--primary);
+    a:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-hover);
     }
 
-    .index-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
+    @media (max-width: 640px) {
+      body {
+        padding-top: 84px;
+      }
 
-    .day-badge {
-      font-size: 12px;
-      font-weight: 700;
-      background: var(--primary-light);
-      color: var(--primary);
-      padding: 4px 10px;
-      border-radius: 6px;
-    }
-
-    .count-badge {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .index-card-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .index-card-desc {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .index-card-footer {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+      .top-actions {
+        top: 16px;
+        right: 16px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="top-actions">
-      <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
-    </div>
-    <div class="header-section">
-      <h1>❤️ 30天數據思維實戰問答總目錄</h1>
-      <p>選擇學習單元以開始複習與自我測驗</p>
-    </div>
-    <div class="grid">
-      
-    <a href="html/Day1.html" class="index-card">
-      <div class="index-card-header">
-        <span class="day-badge">Day1</span>
-        <span class="count-badge">85 題</span>
-      </div>
-      <h2 class="index-card-title">Day1 問答卡</h2>
-      <p class="index-card-desc">包含 85 個核心觀念問題與解答，支援列表速覽與抽考測驗。</p>
-      <div class="index-card-footer">
-        <span>進入複習 →</span>
-      </div>
-    </a>
-  
-    <a href="html/Day2.html" class="index-card">
-      <div class="index-card-header">
-        <span class="day-badge">Day2</span>
-        <span class="count-badge">60 題</span>
-      </div>
-      <h2 class="index-card-title">Day2 問答卡</h2>
-      <p class="index-card-desc">包含 60 個核心觀念問題與解答，支援列表速覽與抽考測驗。</p>
-      <div class="index-card-footer">
-        <span>進入複習 →</span>
-      </div>
-    </a>
-  
-    <a href="html/Day3.html" class="index-card">
-      <div class="index-card-header">
-        <span class="day-badge">Day3</span>
-        <span class="count-badge">90 題</span>
-      </div>
-      <h2 class="index-card-title">Day3 問答卡</h2>
-      <p class="index-card-desc">包含 90 個核心觀念問題與解答，支援列表速覽與抽考測驗。</p>
-      <div class="index-card-footer">
-        <span>進入複習 →</span>
-      </div>
-    </a>
-  
-    </div>
+  <div class="top-actions">
+    <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
   </div>
+  <main>
+    <div class="eyebrow">互動式問答卡</div>
+    <h1>❤️ 30天數據思維實戰問答總目錄</h1>
+    <p>請由總目錄選擇學習單元，進入列表複習或翻卡測驗。</p>
+    <a href="html/index.html">開啟問答總目錄</a>
+  </main>
   <script>
     const THEME_STORAGE_KEY = "qa_theme";
 

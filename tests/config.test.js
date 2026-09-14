@@ -9,6 +9,7 @@ import {
   applyTemplate,
   generateHtmlPage,
   generateIndexPage,
+  generateRootEntryPage,
   loadConfig
 } from "../convert.js";
 
@@ -46,6 +47,8 @@ test("generated unit page defaults to light theme and supports manual dark mode"
   const html = generateHtmlPage("Day1", [{ id: 1, question: "問題", answer: "答案" }], DEFAULT_CONFIG);
 
   assert.match(html, /data-theme="light"/);
+  assert.match(html, /href="index\.html"/);
+  assert.doesNotMatch(html, /href="\.\.\/index\.html"/);
   assert.match(html, /localStorage\.getItem\(THEME_STORAGE_KEY\) \|\| "light"/);
   assert.match(html, /function toggleTheme\(\)/);
   assert.match(html, /<button[^>]+id="themeToggleBtn"[^>]*>/);
@@ -55,6 +58,27 @@ test("generated unit page defaults to light theme and supports manual dark mode"
 
 test("generated index page defaults to light theme and supports manual dark mode", () => {
   const html = generateIndexPage([{ baseName: "Day1", fileName: "Day1.html", count: 1 }], DEFAULT_CONFIG);
+
+  assert.match(html, /data-theme="light"/);
+  assert.match(html, /href="Day1\.html"/);
+  assert.doesNotMatch(html, /href="html\/Day1\.html"/);
+  assert.match(html, /localStorage\.getItem\(THEME_STORAGE_KEY\) \|\| "light"/);
+  assert.match(html, /function toggleTheme\(\)/);
+  assert.match(html, /<button[^>]+id="themeToggleBtn"[^>]*>/);
+  assert.match(html, /html\[data-theme="dark"\]/);
+  assert.doesNotMatch(html, /prefers-color-scheme/);
+});
+
+test("generated root entry page links to html index", () => {
+  const html = generateRootEntryPage(DEFAULT_CONFIG);
+
+  assert.match(html, /href="html\/index\.html"/);
+  assert.match(html, /開啟問答總目錄/);
+  assert.doesNotMatch(html, /href="Day1\.html"/);
+});
+
+test("generated root entry page defaults to light theme and supports manual dark mode", () => {
+  const html = generateRootEntryPage(DEFAULT_CONFIG);
 
   assert.match(html, /data-theme="light"/);
   assert.match(html, /localStorage\.getItem\(THEME_STORAGE_KEY\) \|\| "light"/);
