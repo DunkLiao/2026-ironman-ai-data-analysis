@@ -1,105 +1,9 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const SOURCE_DIR = path.join(__dirname, "source");
-const HTML_DIR = path.join(__dirname, "html");
-const CONFIG_PATH = path.join(__dirname, "qa.config.json");
-
-const DEFAULT_CONFIG = {
-  siteTitle: "數據分析 Anki 學習問答卡",
-  siteIcon: "📊",
-  indexBrowserTitle: "Anki 數據分析問答總目錄",
-  indexSubtitle: "選擇學習單元以開始複習與自我測驗",
-  unitBrowserTitleTemplate: "{unit} - 數據分析問答複習卡",
-  unitHeadingTemplate: "{unit} 問答卡",
-  indexCardTitleTemplate: "{unit} 數據分析問答卡",
-  indexCardDescriptionTemplate: "包含 {count} 個核心觀念問題與解答，支援列表速覽與抽考測驗。"
-};
-
-function escapeHtml(str) {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-function applyTemplate(template, values) {
-  return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (match, key) => {
-    if (Object.prototype.hasOwnProperty.call(values, key)) {
-      return String(values[key]);
-    }
-    return match;
-  });
-}
-
-function loadConfig(configPath = CONFIG_PATH) {
-  if (!fs.existsSync(configPath)) {
-    return DEFAULT_CONFIG;
-  }
-
-  try {
-    const content = fs.readFileSync(configPath, "utf-8");
-    const customConfig = JSON.parse(content);
-
-    if (!customConfig || Array.isArray(customConfig) || typeof customConfig !== "object") {
-      console.warn(`警告：${path.basename(configPath)} 必須是 JSON 物件，已改用預設設定。`);
-      return DEFAULT_CONFIG;
-    }
-
-    return {
-      ...DEFAULT_CONFIG,
-      ...customConfig
-    };
-  } catch (error) {
-    console.warn(`警告：無法讀取 ${path.basename(configPath)}，已改用預設設定。`);
-    console.warn(`原因：${error.message}`);
-    return DEFAULT_CONFIG;
-  }
-}
-
-function parseAnkiFile(filePath) {
-  const content = fs.readFileSync(filePath, "utf-8");
-  const lines = content.split(/\r?\n/);
-  const items = [];
-  let index = 1;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-
-    const parts = line.split("\t");
-    if (parts.length >= 2) {
-      const question = parts[0].trim();
-      const answer = parts.slice(1).join("\t").trim();
-      if (question && answer) {
-        items.push({
-          id: index++,
-          question,
-          answer
-        });
-      }
-    }
-  }
-  return items;
-}
-
-function generateHtmlPage(baseName, items, config) {
-  const pageTitle = applyTemplate(config.unitBrowserTitleTemplate, { unit: baseName });
-  const pageHeading = applyTemplate(config.unitHeadingTemplate, { unit: baseName });
-  const itemsJson = JSON.stringify(items);
-
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(pageTitle)}</title>
+  <title>Day5 - 問答複習卡</title>
   <!-- KaTeX for LaTeX rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
@@ -591,7 +495,7 @@ function generateHtmlPage(baseName, items, config) {
     <div class="header-container">
       <div class="nav-left">
         <a href="../index.html" class="back-btn" title="回目錄">← 目錄</a>
-        <h1 class="page-title">${escapeHtml(pageHeading)}</h1>
+        <h1 class="page-title">Day5 問答卡</h1>
       </div>
       <div class="view-toggles">
         <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
@@ -662,8 +566,8 @@ function generateHtmlPage(baseName, items, config) {
   </main>
 
   <script>
-    const STORAGE_KEY = "anki_mastered_" + "${baseName}";
-    const RAW_DATA = ${itemsJson};
+    const STORAGE_KEY = "anki_mastered_" + "Day5";
+    const RAW_DATA = [{"id":1,"question":"根據 Gartner 的四大數據分析框架，「描述性分析」主要關注哪一個核心問題？","answer":"發生了什麼事？（What happened?）"},{"id":2,"question":"根據 Gartner 的四大數據分析框架，「診斷性分析」主要關注哪一個核心問題？","answer":"為何會發生？（Why did it happen?）"},{"id":3,"question":"在數據分析的階段中，哪一種分析類型能提供「事後覺察」（Hindsight）？","answer":"描述性分析。"},{"id":4,"question":"在數據分析的階段中，哪一種分析類型能提供「洞見」（Insight）？","answer":"診斷性分析。"},{"id":5,"question":"「預測性分析」在數據分析框架中主要探討什麼問題？","answer":"將來會發生什麼？（What will happen?）"},{"id":6,"question":"「處方性分析」的最終目標是什麼？","answer":"研究我們可以做什麼來讓未來更符合期待。"},{"id":7,"question":"描述性分析與診斷性分析在邏輯順序上有何關係？","answer":"描述性分析通常是第一步，診斷性分析則是針對觀察到的現象進一步追查原因。"},{"id":8,"question":"診斷性分析中常用來尋找根本原因的思考方法為何？","answer":"假說思考法。"},{"id":9,"question":"描述性分析常用的客觀數據指標包含哪些？","answer":"平均數、總計、最大值、最小值等統計數值。"},{"id":10,"question":"診斷性分析與資料科學領域（如建模）的主要區別為何？","answer":"診斷性分析偏重探討原因（Why），資料科學則更進一步處理預測與處方性分析。"},{"id":11,"question":"請定義數據分析中的「假說思考法」。","answer":"根據過去經驗或目前資訊，提出最接近根本原因的猜想與假說。"},{"id":12,"question":"描述性分析的典型應用案例為何？","answer":"觀測上個月網站的訪客數、點擊率或營收總額。"},{"id":13,"question":"診斷性分析的典型應用案例為何？","answer":"分析為何第二週的網站訪客人數會突然成長 15%。"},{"id":14,"question":"在診斷性分析表（Diagnostic Table）中，除了提出「假設」與「理由」，還需具備哪項要素？","answer":"檢驗方式（驗證假設的方法）。"},{"id":15,"question":"描述性分析的主要目的是讓決策者對資料產生何種認知？","answer":"了解資料的現況與「長相」。"},{"id":16,"question":"診斷性分析常遇到的挑戰之一是無法僅從數據得出結論，這時需要加入什麼？","answer":"領域知識（Domain Knowledge）或業務經驗。"},{"id":17,"question":"在數據視覺化中，「維度」（Dimension）通常是指哪種類型的資料？","answer":"類別型資料，如名稱、日期或地理位置。"},{"id":18,"question":"在視覺化工具中，「量值」（Measure）通常是指哪種類型的資料？","answer":"數值型資料，可以進行加總、平均等運算。"},{"id":19,"question":"商業智慧工具（BI）的主要用途為何？","answer":"追蹤固定關鍵指標（KPI）與產出標準化報表。"},{"id":20,"question":"AI 在現代數據分析中扮演的主要角色為何？","answer":"輔助分析非結構化資料，並提供彈性且個人化的分析建議。"},{"id":21,"question":"為什麼在視覺化圖表中，灰色通常被建議作為次要資訊的顏色？","answer":"灰色具有將資訊推向背景的效果，能減少視覺負擔並凸顯主色。"},{"id":22,"question":"為什麼視覺化專家通常不推薦使用 3D 圓餅圖？","answer":"3D 效果會產生視覺偏差，讓人難以精確比較各個區塊的實際面積比例。"},{"id":23,"question":"長條圖（Bar Chart）在比較數據時，最重要的視覺基準點是什麼？","answer":"數值起點應從 0 開始，以確保視覺上的長度與實際數值比例一致。"},{"id":24,"question":"若數據間落差極大導致難以在同一座標軸呈現，可採取哪種數學處理方式？","answer":"取對數（Log）轉換。"},{"id":25,"question":"在視覺化原則中，為什麼要避免在圓餅圖中使用過多的分類？","answer":"分類過多會使各塊面積難以區分，導致讀者無法有效率地進行數據溝通。"},{"id":26,"question":"Tableau 的「標記」（Marks）窗格主要功能為何？","answer":"設定圖表的顏色、大小、標籤、詳細資料等視覺特徵。"},{"id":27,"question":"Tableau 中「離散」（Discrete）資料通常以什麼顏色顯示？","answer":"藍色。"},{"id":28,"question":"Tableau 中「連續」（Continuous）資料通常以什麼顏色顯示？","answer":"綠色。"},{"id":29,"question":"在數據處理流程中，「Garbage in, garbage out」這句話強調了什麼？","answer":"強調資料清洗（Data Cleaning）與品質的重要性，錯誤的原始資料會導致無意義的分析結果。"},{"id":30,"question":"Google 提出的數據分析六大流程，起始步驟為何？","answer":"提問（Ask），即定義要解決的問題。"},{"id":31,"question":"何謂「非結構化資料」？","answer":"沒有固定格式的資料，例如對話文字、圖片、影片或手寫記錄。"},{"id":32,"question":"樞紐分析表（Pivot Table）的三大核心元素為何？","answer":"列（Rows）、欄（Columns）、值（Values）。"},{"id":33,"question":"在 Tableau 中，若想將圖表進一步切割成更細的層級，應將欄位拖曳至哪個位置？","answer":"詳細資料（Detail）。"},{"id":34,"question":"當進行診斷性分析時，若 AI 提供了 20 個潛在原因，分析師應如何過濾？","answer":"利用業務經驗判斷可能性，並逐一設計檢驗方式來驗證。"},{"id":35,"question":"為何「散佈圖」（Scatter Plot）常用於關聯性分析？","answer":"它能呈現兩個量值（x 軸與 y 軸）之間的關係與分布趨勢。"},{"id":36,"question":"在視覺化溝通中，何謂「前注意力特徵」（Pre-attentive attributes）？","answer":"大腦在意識思考前，會優先關注的視覺特徵，如顏色對比、形狀、大小或方向。"},{"id":37,"question":"「樹狀圖」（Treemap）與圓餅圖有何相似之處？","answer":"兩者皆利用「面積」來呈現部分對整體的占比關係。"},{"id":38,"question":"數據分析中的「資料品質」主要衡量哪些面向？","answer":"完整度、正確性、即時性與一致性。"},{"id":39,"question":"在 Tableau 中，若要針對特定範圍的資料進行觀察，應使用哪項功能？","answer":"篩選器（Filter）。"},{"id":40,"question":"如何優化數據分析簡報的讀取效率？","answer":"運用色彩對比凸顯關鍵數字，並在標題直接點出分析結論。"},{"id":41,"question":"描述性分析的結論通常以什麼方式呈現？","answer":"事實陳述，例如：「高雄市是 A1 事故件數最多的縣市」。"},{"id":42,"question":"診斷性分析的結論通常以什麼方式呈現？","answer":"假說驗證的結果，例如：「二月事故較多可能與農曆年人潮增加有關」。"},{"id":43,"question":"在 Excel 樞紐分析中，「值」區域通常預設進行什麼運算？","answer":"加總（Sum）或計數（Count）。"},{"id":44,"question":"為何數據視覺化被視為「數據溝通」的重要環節？","answer":"因為圖表能將枯燥且龐大的數據轉化為易於理解的模式與洞察。"},{"id":45,"question":"在診斷性分析的過程中，若假說被驗證為偽，下一步應如何處理？","answer":"重新提出新的假說並進行新一輪的數據驗證（迭代過程）。"},{"id":46,"question":"描述性分析可以幫助我們回答「目標達成率為何」，那診斷性分析則幫助我們回答？","answer":"「目標未達成的原因為何」。"},{"id":47,"question":"在 Tableau 中，自動生成的「緯度」與「經度」欄位主要用於產生何種圖表？","answer":"地圖（Map）。"},{"id":48,"question":"「堆疊長條圖」的視覺限制為何？","answer":"除了底部的分類，中段與上段的分類因起點不同，難以直接精確比較長度。"},{"id":49,"question":"在進行數據分析提問時，為何要強調「量化指標」？","answer":"量化指標能讓問題變得可測量、可觀察，進而找出改善的行動方案。"},{"id":50,"question":"AI 工具在診斷性分析中如何輔助「追問」？","answer":"利用上下文記憶，針對描述性分析的初步發現，提出多個可能的因果假設。"},{"id":51,"question":"在分析 A1 交通事故資料時，若僅觀察總件數而未考慮人口比例，這屬於何種分析誤區？","answer":"數據誤導（未標準化），無法推論真實風險高低。"},{"id":52,"question":"數據視覺化工具中的「計算欄位」通常用於什麼目的？","answer":"根據原始資料定義新的邏輯或公式，例如計算「利潤率」。"},{"id":53,"question":"在 Tableau 中，若要將不同年度的同一月份數據合併觀察，應選取哪種日期顯示方式？","answer":"離散日期（Discrete Date）或上方的日期層級。"},{"id":54,"question":"數據分析流程中，「行動」（Action）階段的目的是什麼？","answer":"解決最初提出的問題或達成商業目標。"},{"id":55,"question":"在視覺化設計中，「高亮顯示」（Highlighting）的主要功用是什麼？","answer":"引導讀者的目光停留在最重要的數據點或異常值上。"},{"id":56,"question":"描述性分析中的「描述性統計」與「視覺化描述」有何共通點？","answer":"兩者皆是為了客觀地呈現歷史資料的現況。"},{"id":57,"question":"診斷性分析的「假說」通常來源於何處？","answer":"目前的資訊觀察、過去的經驗或者是對商業流程的理解。"},{"id":58,"question":"使用 AI 輔助數據清洗時，為什麼需要提供「範例資料」？","answer":"讓 AI 學習資料的長相與結構，以產出正確的清洗邏輯或公式。"},{"id":59,"question":"在 Tableau 中，將 Measure 選項改為「平均值」而非「加總」，屬於哪一類分析動作？","answer":"描述性分析。"},{"id":60,"question":"針對「為什麼營收下滑」進行的跨部門會議，本質上是在進行哪一類分析？","answer":"診斷性分析。"},{"id":61,"question":"在處理個人隱私資料時，提供給 AI 前應進行什麼動作？","answer":"去識別化（De-identification），如遮蔽姓名或 Email。"},{"id":62,"question":"分析圖表選用中，若要觀察時間序列的變化趨勢，哪種圖表最合適？","answer":"線圖（Line Chart）。"},{"id":63,"question":"「診斷性分析」對於企業決策的重要性為何？","answer":"它能找出成功或失敗的關鍵因子，作為優化營運的依據。"},{"id":64,"question":"在描述性分析中，如何發現資料中的「缺漏值」？","answer":"透過完整展開的時間軸或分布圖，觀察是否有不尋常的數據空白處。"},{"id":65,"question":"描述性分析專注於「過去」，預測性分析專注於「未來」，那診斷性分析專注於？","answer":"連結過去現象與未來改進的「因果橋樑」。"}];
     let currentData = [...RAW_DATA];
     let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
     let currentMode = 'list';
@@ -681,8 +585,8 @@ function generateHtmlPage(baseName, items, config) {
       const masteredCount = RAW_DATA.filter(item => masteredSet.has(item.id)).length;
       const pct = total === 0 ? 0 : Math.round((masteredCount / total) * 100);
 
-      document.getElementById('statsCount').textContent = \`顯示 \${currentData.length} / 共 \${total} 題\`;
-      document.getElementById('statsMastered').textContent = \`已掌握 \${masteredCount} 題 (\${pct}%)\`;
+      document.getElementById('statsCount').textContent = `顯示 ${currentData.length} / 共 ${total} 題`;
+      document.getElementById('statsMastered').textContent = `已掌握 ${masteredCount} 題 (${pct}%)`;
       document.getElementById('progressFill').style.width = pct + '%';
     }
 
@@ -707,21 +611,21 @@ function generateHtmlPage(baseName, items, config) {
 
       container.innerHTML = currentData.map(item => {
         const isMastered = masteredSet.has(item.id);
-        return \`
-          <div class="qa-card \${isMastered ? 'mastered' : ''} \${isAllExpanded ? 'open' : ''}" id="card-\${item.id}">
-            <div class="qa-header" onclick="toggleItem(\${item.id})">
-              <span class="qa-id">#\${item.id}</span>
-              <span class="qa-question">\${escapeHtml(item.question)}</span>
+        return `
+          <div class="qa-card ${isMastered ? 'mastered' : ''} ${isAllExpanded ? 'open' : ''}" id="card-${item.id}">
+            <div class="qa-header" onclick="toggleItem(${item.id})">
+              <span class="qa-id">#${item.id}</span>
+              <span class="qa-question">${escapeHtml(item.question)}</span>
               <div class="qa-actions">
-                <button class="master-btn \${isMastered ? 'is-mastered' : ''}"
-                        onclick="toggleMaster(event, \${item.id})"
-                        title="\${isMastered ? '已掌握' : '標記掌握'}">★</button>
+                <button class="master-btn ${isMastered ? 'is-mastered' : ''}"
+                        onclick="toggleMaster(event, ${item.id})"
+                        title="${isMastered ? '已掌握' : '標記掌握'}">★</button>
                 <span class="expand-icon">▼</span>
               </div>
             </div>
-            <div class="qa-answer">\${escapeHtml(item.answer)}</div>
+            <div class="qa-answer">${escapeHtml(item.answer)}</div>
           </div>
-        \`;
+        `;
       }).join('');
 
       renderMath();
@@ -870,7 +774,7 @@ function generateHtmlPage(baseName, items, config) {
       document.getElementById('fcQuestion').textContent = item.question;
       document.getElementById('fcAnswer').textContent = item.answer;
 
-      const cardNumText = \`卡片 \${cardIndex + 1} / \${currentData.length} (#\${item.id})\`;
+      const cardNumText = `卡片 ${cardIndex + 1} / ${currentData.length} (#${item.id})`;
       document.getElementById('fcCardNumber').textContent = cardNumText;
       document.getElementById('fcCardNumberBack').textContent = cardNumText;
 
@@ -930,239 +834,4 @@ function generateHtmlPage(baseName, items, config) {
     });
   </script>
 </body>
-</html>`;
-}
-
-function generateIndexPage(manifest, config) {
-  const cardsHtml = manifest.map(item => `
-    <a href="html/${escapeHtml(item.fileName)}" class="index-card">
-      <div class="index-card-header">
-        <span class="day-badge">${escapeHtml(item.baseName)}</span>
-        <span class="count-badge">${item.count} 題</span>
-      </div>
-      <h2 class="index-card-title">${escapeHtml(applyTemplate(config.indexCardTitleTemplate, { unit: item.baseName, count: item.count }))}</h2>
-      <p class="index-card-desc">${escapeHtml(applyTemplate(config.indexCardDescriptionTemplate, { unit: item.baseName, count: item.count }))}</p>
-      <div class="index-card-footer">
-        <span>進入複習 →</span>
-      </div>
-    </a>
-  `).join('');
-  const siteHeading = [config.siteIcon, config.siteTitle].filter(Boolean).join(" ");
-
-  return `<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(config.indexBrowserTitle)}</title>
-  <style>
-    :root {
-      --bg-color: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --primary-light: #eff6ff;
-      --border-color: #e2e8f0;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
-      --radius: 12px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #0f172a;
-        --card-bg: #1e293b;
-        --text-main: #f8fafc;
-        --text-muted: #94a3b8;
-        --primary: #60a5fa;
-        --primary-hover: #3b82f6;
-        --primary-light: #1e3a8a33;
-        --border-color: #334155;
-      }
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      padding: 40px 20px;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .header-section {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .header-section h1 {
-      font-size: 2rem;
-      margin-bottom: 10px;
-      font-weight: 800;
-    }
-
-    .header-section p {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .index-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 24px;
-      text-decoration: none;
-      color: inherit;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .index-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--primary);
-    }
-
-    .index-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .day-badge {
-      font-size: 12px;
-      font-weight: 700;
-      background: var(--primary-light);
-      color: var(--primary);
-      padding: 4px 10px;
-      border-radius: 6px;
-    }
-
-    .count-badge {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .index-card-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .index-card-desc {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .index-card-footer {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header-section">
-      <h1>${escapeHtml(siteHeading)}</h1>
-      <p>${escapeHtml(config.indexSubtitle)}</p>
-    </div>
-    <div class="grid">
-      ${cardsHtml}
-    </div>
-  </div>
-</body>
-</html>`;
-}
-
-function main() {
-  const config = loadConfig();
-
-  if (!fs.existsSync(SOURCE_DIR)) {
-    console.error(`錯誤：找不到來源目錄 ${SOURCE_DIR}`);
-    process.exit(1);
-  }
-
-  if (!fs.existsSync(HTML_DIR)) {
-    fs.mkdirSync(HTML_DIR, { recursive: true });
-    console.log(`已建立輸出目錄：${HTML_DIR}`);
-  }
-
-  const files = fs.readdirSync(SOURCE_DIR).filter(f => f.toLowerCase().endsWith(".txt") || f.toLowerCase().endsWith(".tsv"));
-
-  if (files.length === 0) {
-    console.warn(`警告：在 ${SOURCE_DIR} 下沒有找到任何 .txt 或 .tsv 檔案`);
-    return;
-  }
-
-  console.log(`開始轉換：共找到 ${files.length} 個檔案...`);
-
-  const manifest = [];
-
-  for (const file of files) {
-    const filePath = path.join(SOURCE_DIR, file);
-    const parsedPath = path.parse(file);
-    const baseName = parsedPath.name;
-    const outputHtmlFileName = `${baseName}.html`;
-    const outputPath = path.join(HTML_DIR, outputHtmlFileName);
-
-    const items = parseAnkiFile(filePath);
-    console.log(`- 處理 [${file}]：解析出 ${items.length} 筆問答`);
-
-    const htmlContent = generateHtmlPage(baseName, items, config);
-    fs.writeFileSync(outputPath, htmlContent, "utf-8");
-    console.log(`  ✓ 已輸出至 html/${outputHtmlFileName}`);
-
-    manifest.push({
-      baseName,
-      fileName: outputHtmlFileName,
-      count: items.length
-    });
-  }
-
-  // Generate index.html in root directory
-  const indexPath = path.join(__dirname, "index.html");
-  const indexContent = generateIndexPage(manifest, config);
-  fs.writeFileSync(indexPath, indexContent, "utf-8");
-  console.log(`✓ 已生成總目錄索引頁面：index.html`);
-
-  // Remove old html/index.html if exists
-  const oldIndexPath = path.join(HTML_DIR, "index.html");
-  if (fs.existsSync(oldIndexPath)) {
-    fs.unlinkSync(oldIndexPath);
-  }
-
-  console.log("\n全部轉換完成！");
-}
-
-if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
-  main();
-}
-
-export {
-  DEFAULT_CONFIG,
-  applyTemplate,
-  loadConfig
-};
+</html>

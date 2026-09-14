@@ -1,0 +1,10 @@
+{
+  "siteTitle": "30天數據思維實戰問答總目錄",
+  "siteIcon": "❤️",
+  "indexBrowserTitle": "30天數據思維實戰問答總目錄",
+  "indexSubtitle": "選擇學習單元以開始複習與自我測驗",
+  "unitBrowserTitleTemplate": "{unit} - 問答複習卡",
+  "unitHeadingTemplate": "{unit} 問答卡",
+  "indexCardTitleTemplate": "{unit} 問答卡",
+  "indexCardDescriptionTemplate": "包含 {count} 個核心觀念問題與解答，支援列表速覽與抽考測驗。"
+}

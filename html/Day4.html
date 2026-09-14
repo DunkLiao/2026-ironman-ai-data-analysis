@@ -1,105 +1,9 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const SOURCE_DIR = path.join(__dirname, "source");
-const HTML_DIR = path.join(__dirname, "html");
-const CONFIG_PATH = path.join(__dirname, "qa.config.json");
-
-const DEFAULT_CONFIG = {
-  siteTitle: "數據分析 Anki 學習問答卡",
-  siteIcon: "📊",
-  indexBrowserTitle: "Anki 數據分析問答總目錄",
-  indexSubtitle: "選擇學習單元以開始複習與自我測驗",
-  unitBrowserTitleTemplate: "{unit} - 數據分析問答複習卡",
-  unitHeadingTemplate: "{unit} 問答卡",
-  indexCardTitleTemplate: "{unit} 數據分析問答卡",
-  indexCardDescriptionTemplate: "包含 {count} 個核心觀念問題與解答，支援列表速覽與抽考測驗。"
-};
-
-function escapeHtml(str) {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-function applyTemplate(template, values) {
-  return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (match, key) => {
-    if (Object.prototype.hasOwnProperty.call(values, key)) {
-      return String(values[key]);
-    }
-    return match;
-  });
-}
-
-function loadConfig(configPath = CONFIG_PATH) {
-  if (!fs.existsSync(configPath)) {
-    return DEFAULT_CONFIG;
-  }
-
-  try {
-    const content = fs.readFileSync(configPath, "utf-8");
-    const customConfig = JSON.parse(content);
-
-    if (!customConfig || Array.isArray(customConfig) || typeof customConfig !== "object") {
-      console.warn(`警告：${path.basename(configPath)} 必須是 JSON 物件，已改用預設設定。`);
-      return DEFAULT_CONFIG;
-    }
-
-    return {
-      ...DEFAULT_CONFIG,
-      ...customConfig
-    };
-  } catch (error) {
-    console.warn(`警告：無法讀取 ${path.basename(configPath)}，已改用預設設定。`);
-    console.warn(`原因：${error.message}`);
-    return DEFAULT_CONFIG;
-  }
-}
-
-function parseAnkiFile(filePath) {
-  const content = fs.readFileSync(filePath, "utf-8");
-  const lines = content.split(/\r?\n/);
-  const items = [];
-  let index = 1;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-
-    const parts = line.split("\t");
-    if (parts.length >= 2) {
-      const question = parts[0].trim();
-      const answer = parts.slice(1).join("\t").trim();
-      if (question && answer) {
-        items.push({
-          id: index++,
-          question,
-          answer
-        });
-      }
-    }
-  }
-  return items;
-}
-
-function generateHtmlPage(baseName, items, config) {
-  const pageTitle = applyTemplate(config.unitBrowserTitleTemplate, { unit: baseName });
-  const pageHeading = applyTemplate(config.unitHeadingTemplate, { unit: baseName });
-  const itemsJson = JSON.stringify(items);
-
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(pageTitle)}</title>
+  <title>Day4 - 問答複習卡</title>
   <!-- KaTeX for LaTeX rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
@@ -591,7 +495,7 @@ function generateHtmlPage(baseName, items, config) {
     <div class="header-container">
       <div class="nav-left">
         <a href="../index.html" class="back-btn" title="回目錄">← 目錄</a>
-        <h1 class="page-title">${escapeHtml(pageHeading)}</h1>
+        <h1 class="page-title">Day4 問答卡</h1>
       </div>
       <div class="view-toggles">
         <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
@@ -662,8 +566,8 @@ function generateHtmlPage(baseName, items, config) {
   </main>
 
   <script>
-    const STORAGE_KEY = "anki_mastered_" + "${baseName}";
-    const RAW_DATA = ${itemsJson};
+    const STORAGE_KEY = "anki_mastered_" + "Day4";
+    const RAW_DATA = [{"id":1,"question":"黃金圈法則 (Golden Circle) 的核心溝通順序為何？","answer":"由內而外分別是 Why（為什麼）、How（如何）、What（什麼）。"},{"id":2,"question":"在圖表溝通應用中，黃金圈法則的「Why」是指什麼？","answer":"釐清為什麼要看這張圖表，以及它想解決什麼核心問題。"},{"id":3,"question":"若圖表溝通的「Why」沒釐清，會導致什麼後果？","answer":"圖表設計再漂亮也無法達成有效的溝通目的。"},{"id":4,"question":"在圖表應用中，黃金圈法則的「How」對應到哪一個設計層面？","answer":"圖表的閱讀設計，即如何引導觀眾理解資訊。"},{"id":5,"question":"在圖表應用中，黃金圈法則的「What」是指哪一個具體行動？","answer":"根據目的選用最適合的圖表類型。"},{"id":6,"question":"比起一般的陳述方式，使用黃金圈法則溝通有哪些優點？","answer":"更容易讓人記住，也更容易建立觀眾的認同感。"},{"id":7,"question":"資料視覺化中的「數據溝通技巧」屬於哪四大知識體系之一？","answer":"Story & Communication（故事與溝通）。"},{"id":8,"question":"在商業圖表的註解文字設計中，「大標題」通常建議佔比多少？","answer":"12%。"},{"id":9,"question":"在圖表設計中，為了確保資訊來源可靠，必須加上哪一項資訊？","answer":"Source line (資料來源行)。"},{"id":10,"question":"圖表註解中的「Source line」在視覺版面上建議佔比多少？","answer":"5%。"},{"id":11,"question":"圖表的核心內容區域（Field）在版面設計中建議佔比多少？","answer":"75%。"},{"id":12,"question":"在圖表色彩設計中，為了突顯主要資訊，應如何調整顏色對比？","answer":"用亮色呈現主要資訊，其餘背景或次要資訊則用灰色。"},{"id":13,"question":"「診斷性分析」主要著重於探討哪一個命題？","answer":"「為什麼會發生？ (Why did it happen)」。"},{"id":14,"question":"診斷性分析中，利用「假說思考法」提出的三個分析框架為何？","answer":"假設、理由、檢驗方式。"},{"id":15,"question":"在處理圓餅圖時，建議的起始角度為何？","answer":"從正上方 12 點鐘方向（90 度）起跳。"},{"id":16,"question":"圓餅圖的資料項目排列順序應遵循什麼原則？","answer":"依數值由大到小順時針排列。"},{"id":17,"question":"圓餅圖中的分類項目數量建議最好不要超過多少種？","answer":"五種。"},{"id":18,"question":"若圓餅圖的分類超過五種，通常會將剩餘項合併為哪一個類別？","answer":"「其他」類別，並使用灰色呈現。"},{"id":19,"question":"當分析的主題是「比較資料高低」時，黃金圈法則的「What」建議選用哪種圖表？","answer":"長條圖。"},{"id":20,"question":"當分析的主題是呈現「時間趨勢」時，最適合的圖表類型為何？","answer":"折線圖。"},{"id":21,"question":"若要呈現資料的「組成比例」，應優先選用哪種圖表？","answer":"圓餅圖。"},{"id":22,"question":"「散佈圖 (Scatter Plot)」主要用於分析哪種資料關係？","answer":"雙變數之間的關聯性。"},{"id":23,"question":"在 Tableau 中，若要修改工作表的背景顏色，應在設定格式中選擇哪一項？","answer":"設定陰影格式。"},{"id":24,"question":"如何透過色彩應用在長條圖中建立「版型變化」？","answer":"根據數值大小（如 Sales）賦予渐層色彩。"},{"id":25,"question":"在圖表溝通中，「視覺引導特徵」包括哪些要素？","answer":"長度、寬度、方向、大小、形狀、顏色對比等。"},{"id":26,"question":"為什麼在折線圖中標註「7月資料僅統計至7/20」很重要？","answer":"為了避免誤導觀眾認為 7 月是完整月份，導致錯誤推論趨勢下滑。"},{"id":27,"question":"在 Tableau 中，若資料集中沒有某項數據，該如何讓格線呈現完整而非留白？","answer":"在分析工具中勾選「顯示空列」或「顯示空欄」。"},{"id":28,"question":"在進行假說思考時，如何檢驗「凌晨事故死亡率高」的假設？","answer":"比較該時段與其他時段的「平均每起事故死亡人數」與「有死亡事故占比」。"},{"id":29,"question":"在描述性分析中，對於「不完整月份」的資料應注意什麼？","answer":"不能推論該全年度或全月份的整體趨勢。"},{"id":30,"question":"黃金圈法則強調的溝通重點在於哪種轉變？","answer":"從「產品功能導向」轉向「價值與使命導向」。"},{"id":31,"question":"在 Tableau 工作表設計中，修改「網格線」樣式的主要目的是什麼？","answer":"增加或減少視覺輔助線，以提升圖表的可讀性。"},{"id":32,"question":"根據視覺型錄 (Visual Catalog) 概念，圓形面積通常用來代表什麼？","answer":"全球資訊中各屬性的數量佔比。"},{"id":33,"question":"在圖表標註中，「小標題」的功能為何？","answer":"提供額外的補充資訊或具體數據描述，佔版面約 8%。"},{"id":34,"question":"「WTF Visualizations」網站的主要內容為何？","answer":"收集並展示那些不符合邏輯或讓人產生誤解的失敗視覺化作品。"},{"id":35,"question":"在黃金圈法則應用下，製作圖表的第一步是什麼？","answer":"確定為什麼要製作這張圖表（釐清目標）。"},{"id":36,"question":"「假說思考法」的核心在於不斷進行哪種過程？","answer":"反覆進行疊代與驗證假設。"},{"id":37,"question":"在水平長條圖中，為了讓排名差異清楚，通常會對座標軸做什麼處理？","answer":"依數據由高到低排序。"},{"id":38,"question":"若要在圖表中展現平日與週末的事故差異，直條圖的設計重點為何？","answer":"固定星期順序（一至日），並透過視覺處理突顯週六、日。"},{"id":39,"question":"在 Tableau 實作中，若要將特定類別加上公司 Logo，是為了達成什麼目的？","answer":"輔助辨識，增加視覺上的品牌識別與專業度。"},{"id":40,"question":"在數據分析流程中，「診斷性分析」介於哪兩者之間？","answer":"描述性分析（發生什麼事）與預測性分析（將會發生什麼）。"},{"id":41,"question":"黃金圈溝通中，提到「任務追蹤、檔案共享」屬於哪一個層級？","answer":"What（功能層次）。"},{"id":42,"question":"黃金圈溝通中，提到「直覺、透明、容易上手」屬於哪一個層級？","answer":"How（流程與特質）。"},{"id":43,"question":"在圖表視覺特徵中，將特定物體「圈起來」會產生什麼效果？","answer":"使觀眾更容易將目光鎖定在該特定資訊點上。"},{"id":44,"question":"圖表標註中的「2013: New policy introduced」屬於哪種溝通元素？","answer":"Annotation (註解)，用於解釋數據變化的原因。"},{"id":45,"question":"為什麼在進行圖表設計前，建議將清洗好的資料存成 .csv 格式？","answer":"方便後續導入 Tableau 等視覺化工具進行繪圖。"},{"id":46,"question":"在 Tableau 中，若要修改「欄」或「列」的字體顏色，應在那裡操作？","answer":"設定字體格式側邊欄位。"},{"id":47,"question":"在數據分析的「描述性分析」階段，最主要的任務是什麼？","answer":"歸納並描述目前資料呈現的現象與數字事實。"},{"id":48,"question":"黃金圈法則中，「We believe...」通常用於表達哪一個層級？","answer":"Why（信念與價值觀）。"},{"id":49,"question":"在 Tableau 中，若圓形標記無法修改邊界，通常是因為什麼原因？","answer":"標記類型尚未正確切換為「圓」。"},{"id":50,"question":"診斷性分析中，如何針對「2月受傷人數最高」進行追問？","answer":"運用假說思考法找出可能的原因，並列出檢驗假設的方式。"},{"id":51,"question":"在視覺化中，「灰色」除了代表次要資訊外，通常也暗示什麼？","answer":"背景、基準線或不具顯著意義的參考數據。"},{"id":52,"question":"長條圖設計重點中，為什麼 X 軸通常建議從 0 開始？","answer":"避免截斷座標軸導致比例誤導，確保比較數據的客觀性。"},{"id":53,"question":"在圖表溝通中，「層次結構」的建立通常依賴什麼？","answer":"標題、小標題與註解的字體大小及顏色差異。"},{"id":54,"question":"黃金圈法則之所以有效，是因為它連結了人類大腦中負責什麼的部分？","answer":"負責決策與情感，而不僅僅是邏輯與理性（What）。"},{"id":55,"question":"在 Tableau 實作中，「SUM(Sales)」被拖曳到色彩標記後，圖表會如何變化？","answer":"長條圖的顏色會依銷售額總和的大小呈現深淺或色調差異。"},{"id":56,"question":"數據故事化 (Data Storytelling) 的核心目標為何？","answer":"透過數據解釋「為什麼」這件事對聽眾有意義。"},{"id":57,"question":"在圖表設計中，「白底黑字」與「深色背景」的主要差異為何？","answer":"深色背景適合螢幕呈現與沉浸感，白底適合列印與正式文件閱覽。"},{"id":58,"question":"當我們說「好的團隊不該浪費時間在混亂中」，這是圖表溝通的哪一部分？","answer":"開場的 Why (定義問題與價值)。"},{"id":59,"question":"圖表標註中建議增加「資料日期範圍」是為了防止什麼錯誤？","answer":"過度概括 (Over-generalization) 尚未發生的趨勢。"},{"id":60,"question":"在 Tableau 中，若要移除工作表的格線，應調整哪一個選項？","answer":"設定線條格式中的「格線：無」。"}];
     let currentData = [...RAW_DATA];
     let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
     let currentMode = 'list';
@@ -681,8 +585,8 @@ function generateHtmlPage(baseName, items, config) {
       const masteredCount = RAW_DATA.filter(item => masteredSet.has(item.id)).length;
       const pct = total === 0 ? 0 : Math.round((masteredCount / total) * 100);
 
-      document.getElementById('statsCount').textContent = \`顯示 \${currentData.length} / 共 \${total} 題\`;
-      document.getElementById('statsMastered').textContent = \`已掌握 \${masteredCount} 題 (\${pct}%)\`;
+      document.getElementById('statsCount').textContent = `顯示 ${currentData.length} / 共 ${total} 題`;
+      document.getElementById('statsMastered').textContent = `已掌握 ${masteredCount} 題 (${pct}%)`;
       document.getElementById('progressFill').style.width = pct + '%';
     }
 
@@ -707,21 +611,21 @@ function generateHtmlPage(baseName, items, config) {
 
       container.innerHTML = currentData.map(item => {
         const isMastered = masteredSet.has(item.id);
-        return \`
-          <div class="qa-card \${isMastered ? 'mastered' : ''} \${isAllExpanded ? 'open' : ''}" id="card-\${item.id}">
-            <div class="qa-header" onclick="toggleItem(\${item.id})">
-              <span class="qa-id">#\${item.id}</span>
-              <span class="qa-question">\${escapeHtml(item.question)}</span>
+        return `
+          <div class="qa-card ${isMastered ? 'mastered' : ''} ${isAllExpanded ? 'open' : ''}" id="card-${item.id}">
+            <div class="qa-header" onclick="toggleItem(${item.id})">
+              <span class="qa-id">#${item.id}</span>
+              <span class="qa-question">${escapeHtml(item.question)}</span>
               <div class="qa-actions">
-                <button class="master-btn \${isMastered ? 'is-mastered' : ''}"
-                        onclick="toggleMaster(event, \${item.id})"
-                        title="\${isMastered ? '已掌握' : '標記掌握'}">★</button>
+                <button class="master-btn ${isMastered ? 'is-mastered' : ''}"
+                        onclick="toggleMaster(event, ${item.id})"
+                        title="${isMastered ? '已掌握' : '標記掌握'}">★</button>
                 <span class="expand-icon">▼</span>
               </div>
             </div>
-            <div class="qa-answer">\${escapeHtml(item.answer)}</div>
+            <div class="qa-answer">${escapeHtml(item.answer)}</div>
           </div>
-        \`;
+        `;
       }).join('');
 
       renderMath();
@@ -870,7 +774,7 @@ function generateHtmlPage(baseName, items, config) {
       document.getElementById('fcQuestion').textContent = item.question;
       document.getElementById('fcAnswer').textContent = item.answer;
 
-      const cardNumText = \`卡片 \${cardIndex + 1} / \${currentData.length} (#\${item.id})\`;
+      const cardNumText = `卡片 ${cardIndex + 1} / ${currentData.length} (#${item.id})`;
       document.getElementById('fcCardNumber').textContent = cardNumText;
       document.getElementById('fcCardNumberBack').textContent = cardNumText;
 
@@ -930,239 +834,4 @@ function generateHtmlPage(baseName, items, config) {
     });
   </script>
 </body>
-</html>`;
-}
-
-function generateIndexPage(manifest, config) {
-  const cardsHtml = manifest.map(item => `
-    <a href="html/${escapeHtml(item.fileName)}" class="index-card">
-      <div class="index-card-header">
-        <span class="day-badge">${escapeHtml(item.baseName)}</span>
-        <span class="count-badge">${item.count} 題</span>
-      </div>
-      <h2 class="index-card-title">${escapeHtml(applyTemplate(config.indexCardTitleTemplate, { unit: item.baseName, count: item.count }))}</h2>
-      <p class="index-card-desc">${escapeHtml(applyTemplate(config.indexCardDescriptionTemplate, { unit: item.baseName, count: item.count }))}</p>
-      <div class="index-card-footer">
-        <span>進入複習 →</span>
-      </div>
-    </a>
-  `).join('');
-  const siteHeading = [config.siteIcon, config.siteTitle].filter(Boolean).join(" ");
-
-  return `<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(config.indexBrowserTitle)}</title>
-  <style>
-    :root {
-      --bg-color: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --primary-light: #eff6ff;
-      --border-color: #e2e8f0;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
-      --radius: 12px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #0f172a;
-        --card-bg: #1e293b;
-        --text-main: #f8fafc;
-        --text-muted: #94a3b8;
-        --primary: #60a5fa;
-        --primary-hover: #3b82f6;
-        --primary-light: #1e3a8a33;
-        --border-color: #334155;
-      }
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      padding: 40px 20px;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .header-section {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .header-section h1 {
-      font-size: 2rem;
-      margin-bottom: 10px;
-      font-weight: 800;
-    }
-
-    .header-section p {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .index-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 24px;
-      text-decoration: none;
-      color: inherit;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .index-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--primary);
-    }
-
-    .index-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .day-badge {
-      font-size: 12px;
-      font-weight: 700;
-      background: var(--primary-light);
-      color: var(--primary);
-      padding: 4px 10px;
-      border-radius: 6px;
-    }
-
-    .count-badge {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .index-card-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .index-card-desc {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .index-card-footer {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header-section">
-      <h1>${escapeHtml(siteHeading)}</h1>
-      <p>${escapeHtml(config.indexSubtitle)}</p>
-    </div>
-    <div class="grid">
-      ${cardsHtml}
-    </div>
-  </div>
-</body>
-</html>`;
-}
-
-function main() {
-  const config = loadConfig();
-
-  if (!fs.existsSync(SOURCE_DIR)) {
-    console.error(`錯誤：找不到來源目錄 ${SOURCE_DIR}`);
-    process.exit(1);
-  }
-
-  if (!fs.existsSync(HTML_DIR)) {
-    fs.mkdirSync(HTML_DIR, { recursive: true });
-    console.log(`已建立輸出目錄：${HTML_DIR}`);
-  }
-
-  const files = fs.readdirSync(SOURCE_DIR).filter(f => f.toLowerCase().endsWith(".txt") || f.toLowerCase().endsWith(".tsv"));
-
-  if (files.length === 0) {
-    console.warn(`警告：在 ${SOURCE_DIR} 下沒有找到任何 .txt 或 .tsv 檔案`);
-    return;
-  }
-
-  console.log(`開始轉換：共找到 ${files.length} 個檔案...`);
-
-  const manifest = [];
-
-  for (const file of files) {
-    const filePath = path.join(SOURCE_DIR, file);
-    const parsedPath = path.parse(file);
-    const baseName = parsedPath.name;
-    const outputHtmlFileName = `${baseName}.html`;
-    const outputPath = path.join(HTML_DIR, outputHtmlFileName);
-
-    const items = parseAnkiFile(filePath);
-    console.log(`- 處理 [${file}]：解析出 ${items.length} 筆問答`);
-
-    const htmlContent = generateHtmlPage(baseName, items, config);
-    fs.writeFileSync(outputPath, htmlContent, "utf-8");
-    console.log(`  ✓ 已輸出至 html/${outputHtmlFileName}`);
-
-    manifest.push({
-      baseName,
-      fileName: outputHtmlFileName,
-      count: items.length
-    });
-  }
-
-  // Generate index.html in root directory
-  const indexPath = path.join(__dirname, "index.html");
-  const indexContent = generateIndexPage(manifest, config);
-  fs.writeFileSync(indexPath, indexContent, "utf-8");
-  console.log(`✓ 已生成總目錄索引頁面：index.html`);
-
-  // Remove old html/index.html if exists
-  const oldIndexPath = path.join(HTML_DIR, "index.html");
-  if (fs.existsSync(oldIndexPath)) {
-    fs.unlinkSync(oldIndexPath);
-  }
-
-  console.log("\n全部轉換完成！");
-}
-
-if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
-  main();
-}
-
-export {
-  DEFAULT_CONFIG,
-  applyTemplate,
-  loadConfig
-};
+</html>

@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node --preserve-symlinks-main convert.js",
-    "build": "node --preserve-symlinks-main convert.js"
+    "build": "node --preserve-symlinks-main convert.js",
+    "test": "node --test tests/*.test.js"
   },
   "keywords": ["anki", "html", "qa", "flashcard"],
   "author": "",

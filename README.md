@@ -18,6 +18,7 @@
 ├── index.html            # 全單元總目錄導覽首頁（相對連結至 html/*.html）
 ├── convert.js            # Node.js 轉檔核心腳本（零第三方套件依賴）
 ├── convert.bat           # Windows 一鍵批次執行檔（純 ASCII，雙擊即跑）
+├── qa.config.json        # 轉檔標題與文案設定檔
 ├── package.json          # 專案設定檔
 └── README.md             # 本說明文件
 ```
@@ -37,6 +38,32 @@ node --preserve-symlinks-main convert.js
 ```
 
 轉檔完成後，直接於瀏覽器開啟專案根目錄下的 `index.html` 即可開始使用！
+
+---
+
+## ⚙️ 轉檔設定
+
+可透過專案根目錄的 `qa.config.json` 調整產出網頁標題與相關文案，不需要修改程式碼。執行 `npm start`、`npm run build` 或雙擊 `convert.bat` 時都會自動讀取此設定檔。
+
+```json
+{
+  "siteTitle": "數據分析 Anki 學習問答卡",
+  "siteIcon": "📊",
+  "indexBrowserTitle": "Anki 數據分析問答總目錄",
+  "indexSubtitle": "選擇學習單元以開始複習與自我測驗",
+  "unitBrowserTitleTemplate": "{unit} - 數據分析問答複習卡",
+  "unitHeadingTemplate": "{unit} 問答卡",
+  "indexCardTitleTemplate": "{unit} 數據分析問答卡",
+  "indexCardDescriptionTemplate": "包含 {count} 個核心觀念問題與解答，支援列表速覽與抽考測驗。"
+}
+```
+
+可用模板變數：
+
+- `{unit}`：來源檔名去除副檔名後的單元名稱，例如 `Day1`。
+- `{count}`：該單元解析出的問答題數。
+
+若 `qa.config.json` 不存在、格式錯誤或缺少部分欄位，轉檔工具會自動使用內建預設值。
 
 ---
 
