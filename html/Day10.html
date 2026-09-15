@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day10 - 問答複習卡</title>
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-light: #eff6ff;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --accent: #f59e0b;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
+      --success: #34d399;
+      --success-light: #064e3b33;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* Navigation / Header */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .view-toggles {
+      display: flex;
+      background: var(--bg-color);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .toggle-btn {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--border-color);
+    }
+
+    .btn.active-filter {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 99px;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* List View Cards */
+    .qa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .qa-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .qa-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .qa-card.mastered {
+      border-left: 4px solid var(--success);
+    }
+
+    .qa-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .qa-id {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .qa-question {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      padding-top: 2px;
+    }
+
+    .qa-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .master-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+      transition: transform 0.15s, color 0.15s;
+    }
+
+    .master-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .master-btn.is-mastered {
+      color: var(--accent);
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .qa-card.open .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    .qa-answer {
+      display: none;
+      padding: 16px 20px 18px 60px;
+      background: var(--bg-color);
+      border-top: 1px dashed var(--border-color);
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    .qa-card.open .qa-answer {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Flashcard Mode */
+    .flashcard-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+    }
+
+    .flashcard-wrapper {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 640px;
+      min-height: 340px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .flashcard-wrapper.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-sizing: border-box;
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .card-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .badge-q {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-a {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .card-body {
+      margin: auto 0;
+      padding: 20px 10px;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .card-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .flashcard-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .flashcard-controls .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .shortcuts-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="nav-left">
+        <a href="index.html" class="back-btn" title="回目錄">← 目錄</a>
+        <h1 class="page-title">Day10 問答卡</h1>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+        <div class="view-toggles">
+          <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
+          <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜尋問題或答案關鍵字..." oninput="handleSearch()">
+      </div>
+      <div class="action-buttons">
+        <button class="btn" id="filterMasteredBtn" onclick="toggleFilterMastered()">⭐ 只看未掌握</button>
+        <button class="btn" id="expandAllBtn" onclick="toggleExpandAll()">展開全部</button>
+        <button class="btn" onclick="shuffleCards()">🔀 隨機洗牌</button>
+        <button class="btn" onclick="resetOrder()">🔄 恢復順序</button>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <span id="statsCount">總計 0 題</span>
+      <div class="progress-bar-container">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <span id="statsMastered">掌握率 0%</span>
+    </div>
+
+    <!-- List View -->
+    <div id="qaList" class="qa-list"></div>
+
+    <!-- Flashcard Mode View -->
+    <div id="flashcardContainer" class="flashcard-container">
+      <div class="flashcard-wrapper" id="flashcardWrapper" onclick="flipCard()">
+        <div class="flashcard-inner">
+          <!-- Front Face -->
+          <div class="flashcard-face flashcard-front">
+            <div class="card-top">
+              <span class="card-badge badge-q">問題</span>
+              <span id="fcCardNumber">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtn" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcQuestion">載入中...</div>
+            <div class="card-hint">💡 點擊卡片或按空白鍵翻面看答案</div>
+          </div>
+          <!-- Back Face -->
+          <div class="flashcard-face flashcard-back">
+            <div class="card-top">
+              <span class="card-badge badge-a">解答</span>
+              <span id="fcCardNumberBack">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtnBack" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcAnswer">載入中...</div>
+            <div class="card-hint">💡 再次點擊卡片翻回正面</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn" onclick="prevCard()">← 上一題</button>
+        <button class="btn btn-primary" onclick="flipCard()">翻轉卡片</button>
+        <button class="btn" onclick="nextCard()">下一題 →</button>
+      </div>
+      <div class="shortcuts-hint">鍵盤快速鍵：[←] 上一題 · [空白鍵] 翻面 · [→] 下一題 · [M] 標記掌握</div>
+    </div>
+  </main>
+
+  <script>
+    const THEME_STORAGE_KEY = "qa_theme";
+    const STORAGE_KEY = "anki_mastered_" + "Day10";
+    const RAW_DATA = [{"id":1,"question":"分析成熟度模型（Analytics Maturity Model）的主要目的是什麼？","answer":"提供結構化的方式來評估目前的數據能力、識別差距並建立投資證明。"},{"id":2,"question":"根據 Alteryx 的研究，Stage 4 組織在營收上比 Stage 2 組織高出約幾倍？","answer":"6 倍。"},{"id":3,"question":"研究顯示 Stage 4 組織在營運收入上高出 Stage 2 組織約幾倍？","answer":"4.8 倍。"},{"id":4,"question":"目前大多數組織在成熟度量表上的平均得分是多少？","answer":"2.2 分。"},{"id":5,"question":"分析成熟度模型的 Stage 1（描述性分析）主要回答哪一個核心問題？","answer":"發生了什麼事？（What happened?）"},{"id":6,"question":"在 Stage 1（描述性分析）階段，分析師通常將 $80\\%$ 的時間花在什麼工作上？","answer":"拉取數據與建立報告。"},{"id":7,"question":"分析成熟度模型的 Stage 2（診斷性分析）主要回答哪一個核心問題？","answer":"為什麼會發生？（Why did it happen?）"},{"id":8,"question":"分析成熟度模型的 Stage 3（預測性分析）主要回答哪一個核心問題？","answer":"將會發生什麼事？（What will happen?）"},{"id":9,"question":"分析成熟度模型的 Stage 4（指導性分析）主要回答哪一個核心問題？","answer":"我們應該做什麼？（What should we do?）"},{"id":10,"question":"Stage 5（認知/AI 驅動）階段的特徵為何？","answer":"AI 系統在特定領域內無需人類干預即可做出並執行決策。"},{"id":11,"question":"Stage 6（變革性）階段的定義為何？","answer":"分析不再僅是支持業務，而是業務模式的核心能力與產品。"},{"id":12,"question":"Gartner 的分析成熟度模型定義了哪四個主要技術階段？","answer":"描述性、診斷性、預測性與指導性分析。"},{"id":13,"question":"McKinsey 的成熟度模型評估哪五個維度？","answer":"數據、模型、技術、流程與組織。"},{"id":14,"question":"TDWI 分析成熟度模型側重於哪五個階段？","answer":"初創、預先採用、早期採用、公司採用與成熟/遠見。"},{"id":15,"question":"HIMSS AMAM 框架是專門為哪一個行業設計的？","answer":"醫療保健行業。"},{"id":16,"question":"提升分析投資報酬率（ROI）最常見的「天花板」障礙是什麼？","answer":"基礎設施摩擦（數據獲取的難易程度）。"},{"id":17,"question":"要從 Stage 1 晉升到 Stage 2，首要任務是什麼？","answer":"將數據源整合到單一倉庫或湖倉中，停止手動提取數據。"},{"id":18,"question":"在 Stage 3（預測性）中，「反饋迴路」（Feedback Loop）的作用是什麼？","answer":"將預測結果與實際產出進行比較，以隨著時間優化模型。"},{"id":19,"question":"為什麼大多數組織會停留在 Stage 2（診斷性）？","answer":"因為他們將分析視為技術問題，而非財務、治理與組織策略問題。"},{"id":20,"question":"推進成熟度最高槓桿的投資通常是什麼？","answer":"有高階主管支持的書面分析策略，而非新數據平台。"},{"id":21,"question":"大數據（Big Data）通常具備哪三個著名的「V」特徵？","answer":"大量（Volume）、高速（Velocity）與多樣（Variety）。"},{"id":22,"question":"歐洲銀行管理局（EBA）報告中定義的四大支柱為何？","answer":"數據管理、技術基礎設施、組織與治理，以及分析方法論。"},{"id":23,"question":"在機器學習（ML）中，什麼是「監督式學習」（Supervised Learning）？","answer":"演算法從帶有標籤的訓練數據集中學習規則以預測未來標籤。"},{"id":24,"question":"在機器學習（ML）中，什麼是「非監督式學習」（Unsupervised Learning）？","answer":"演算法從不帶標籤的數據中學習，通過識別聚類來檢測模式。"},{"id":25,"question":"什麼是「強化學習」（Reinforcement Learning）？","answer":"演算法通過與環境互動並根據獎勵或懲罰的回饋來調整策略。"},{"id":26,"question":"深度學習（Deep Learning）的基本結構靈感來源為何？","answer":"受大腦結構啟發的神經網路。"},{"id":27,"question":"在數據信任元素中，「可解釋性」（Explainability）的定義為何？","answer":"模型內部行為能被人類理解，或能為產出結果提供理由。"},{"id":28,"question":"什麼是「公平性」（Fairness）在 AI 模型中的意義？","answer":"確保模型保護特定群體免受直接或間接的歧視。"},{"id":29,"question":"在 EBA 報告中，哪一個信任元素負責追蹤過程中的所有步驟、標準與選擇？","answer":"可追溯性與可審計性（Traceability and Auditability）。"},{"id":30,"question":"數據管理中的「結構化數據」指的是什麼？","answer":"已分類或組織成標準欄位與類別的數據，如數據庫或試算表。"},{"id":31,"question":"銀行目前在 BD&AA 應用中主要使用哪種數據流？","answer":"核心銀行數據（內部結構化數據）。"},{"id":32,"question":"什麼是「擴增智能」（Augmented Intelligence）？","answer":"專注於有限的智能任務，旨在支持人類決策的解決方案。"},{"id":33,"question":"HR 分析成熟度模型如何定義人才分析的第四維度？","answer":"將勞動力決策直接與業務成果連結，而非僅連結 HR 指標。"},{"id":34,"question":"行銷分析團隊通常在成熟度模型中卡在哪個階段？","answer":"Stage 2（診斷性），能追蹤點擊但難以進行跨渠道收入歸因。"},{"id":35,"question":"銀行在反洗錢（AML）中如何應用 BD&AA？","answer":"利用文件與圖像處理技術（如面部識別）來簡化客戶入職流程。"},{"id":36,"question":"模型中「垃圾進，垃圾出」（Garbage In, Garbage Out）的含義為何？","answer":"應用程式的可靠程度完全取決於所用數據的品質與數量。"},{"id":37,"question":"可解釋性與準確性（Accuracy）之間通常存在什麼樣的權衡關係？","answer":"更準確的複雜模型（如深度學習）通常可解釋性較低。"},{"id":38,"question":"機器學習模型安全性（Model Security）主要關注什麼？","answer":"針對 ML 模型特有的攻擊及其對應的保護措施。"},{"id":39,"question":"在銀行自動化信用評分中，常用的機器學習方法有哪些？","answer":"回歸、決策樹與統計分析。"},{"id":40,"question":"對於銀行監管資本計算，目前使用 ML 的主要侷限是什麼？","answer":"「黑箱」問題以及在經濟低迷等不同條件下的效率測試不足。"},{"id":41,"question":"什麼是「傾向建模」（Propensity Modelling）？","answer":"分析客戶以預測其行為或購買特定產品的自然傾向。"},{"id":42,"question":"在欺詐檢測中，演算法如何透過「回饋迴路」優化？","answer":"收集檢測過程中新識別的欺詐模式，定期重新訓練模型。"},{"id":43,"question":"組織要推進至 Stage 3，通常需要聘用哪種核心專業人才？","answer":"數據科學家（Data Scientist）。"},{"id":44,"question":"推動 Stage 4 進展的技術關鍵是什麼？","answer":"建立決策 API，將建議直接嵌入營運系統（如 CRM、ERP）。"},{"id":45,"question":"大數據中的「真實性」（Veracity）特徵指的是什麼？","answer":"數據的準確性與品質。"},{"id":46,"question":"MLOps 基礎設施的主要功能是什麼？","answer":"實現模型在生產環境中的自動部署、監控、維護與重新訓練。"},{"id":47,"question":"「單一事實來源」（Single Source of Truth）在分析治理中的作用為何？","answer":"確保組織內所有部門對關鍵業務指標有統一且公認的定義。"},{"id":48,"question":"EBA 指出，銀行目前使用外部社交媒體數據的主要擔憂是什麼？","answer":"外部數據的可靠性與準確性問題。"},{"id":49,"question":"在數據管理中，「半結構化數據」的例子為何？","answer":"包含語義標籤但不符合傳統關係數據庫結構的數據（如 XML、JSON）。"},{"id":50,"question":"數據分析自我評估表建議分析師的時間分配應偏向哪一部分？","answer":"應減少數據準備時間，增加實際分析（Analysis）的時間。"},{"id":51,"question":"推進 Stage 5（認知階段）時，每季度必須進行什麼樣的審計？","answer":"自動決策系統的倫理與偏見審計。"},{"id":52,"question":"為什麼雲端服務被認為是先進分析的促成因素（Enabler）？","answer":"它提供了可擴展的空間來輕鬆存儲與分析大量數據。"},{"id":53,"question":"什麼是「數據降級」（Data Degradation）下的模型管理？","answer":"定義模型性能閾值，並在準確度下降時指派所有權進行重新訓練。"},{"id":54,"question":"在 Stage 2 到 Stage 3 的跳躍中，最常見的失败模式是什麼？","answer":"缺乏書面分析策略與業務部門的分析素養低。"},{"id":55,"question":"什麼是「倫理設計」（Ethical by Design）？","answer":"在 AI 項目的起始階段就嵌入基本倫理原則。"},{"id":56,"question":"數據保護規則（如 GDPR）如何影響 BD&AA 的使用？","answer":"要求組織確保個人數據處理的問責制與透明度，增強客戶信任。"},{"id":57,"question":"在銀行業應用中，「自然語言處理」（NLP）的主要用途是什麼？","answer":"將客戶語音轉換為文本，用於自動化滿意度分析或聊天機器人。"},{"id":58,"question":"演算法偏見（Bias）檢測的一種常用方法是什麼？","answer":"在模型開發階段移除敏感屬性（變數）並對訓練集進行統計分析。"},{"id":59,"question":"在預測性分析中，「模型註冊表」（Model Registry）的作用是什麼？","answer":"對已部署的模型進行版本控制、跟蹤與監控。"},{"id":60,"question":"推進分析成熟度的單一最有效行動是什麼？","answer":"降低數據獲取的摩擦（Make data easier to access）。"},{"id":61,"question":"什麼是「自主與自適應分析」（Autonomous and Adaptive Analytics）？","answer":"最複雜的技術，模型能從交易中自動學習並實時更新結果。"},{"id":62,"question":"在消費者保護方面，BD&AA 系統必須能提供什麼？","answer":"能以易於理解的語言解釋決策原因，回應消費者投訴。"},{"id":63,"question":"數據科學（Data Science）與數據挖掘（Data Mining）的主要區別是什麼？","answer":"數據科學涵蓋了數據清洗、準備與分析的所有步驟。"},{"id":64,"question":"銀行使用「私人雲」或「混合雲」的主要原因為何？","answer":"為了在利用雲端優勢的同時維持對核心物料流程的風險控制。"},{"id":65,"question":"在 EBA 框架中，「數據管理」支柱如何幫助決策？","answer":"透過提高對數據的理解、營運效率與合規性來優化決策。"},{"id":66,"question":"對於組織而言，誰應該是分析成熟度進展的負責人？","answer":"單一負責人（而非委員會）。"},{"id":67,"question":"什麼是「數據目錄」（Data Catalog）？","answer":"讓分析師無需依賴口耳相傳即可找到並信任數據的工具。"},{"id":68,"question":"在行銷中，什麼是「多觸點歸因」（Multi-touch Attribution）？","answer":"識別是哪些組合的接觸點推動了最終的成交，而非僅看最後一次點擊。"},{"id":69,"question":"什麼是「身份解析」（Identity Resolution）？","answer":"在行銷數據整合中，解決不同平台間客戶標識符不統一的問題。"},{"id":70,"question":"EBA 報告提到的「信任元素」共有幾個？","answer":"8 個。"},{"id":71,"question":"「數據可攜性」（Data Portability）在現代數據架構審計中為何重要？","answer":"它確保組織不會被特定供應商鎖定，增加技術靈活性。"},{"id":72,"question":"在 Stage 4（指導性）中，如何衡量決策品質？","answer":"跟蹤遵循模型建議後是否真的改善了業務成果。"},{"id":73,"question":"為什麼執行主管的贊助（Executive Sponsorship）對分析成熟度至關重要？","answer":"它是將分析進展與營收或成本成果掛鉤的強制力量。"},{"id":74,"question":"什麼是「非結構化數據」？","answer":"未按預定方式組織、難以搜索且來自傳感器、音視頻或社交媒體的數據。"},{"id":75,"question":"在診斷性分析中，使用什麼樣的統計方法來發現隱藏關聯？","answer":"推論統計（Inferential Statistics）。"},{"id":76,"question":"數據分析成熟度中的「變革性」企業例子有哪些？","answer":"核心產品即為數據洞察，或具備複合競爭優勢的數據網絡效應企業。"},{"id":77,"question":"Stage 4 組織與 Stage 2 組織的績效差距通常在多長的時間跨度內顯現？","answer":"10 年。"},{"id":78,"question":"在 EBA 報告中，「分析方法論」支柱涵蓋了什麼？","answer":"促進高級分析方案開發、實施與採用的生命週期階段。"},{"id":79,"question":"什麼是「數據權力機構」（Data Owners）？","answer":"為每個關鍵領域指派的負責人，用以執行一致的數據定義。"},{"id":80,"question":"在 Stage 2 邁向 Stage 3 的行動指南中，建議如何訓練業務分析師？","answer":"進行 SQL 與基礎統計概念的培訓。"}];
+    let currentData = [...RAW_DATA];
+    let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+    let currentMode = 'list';
+    let filterOnlyUnmastered = false;
+    let isAllExpanded = false;
+    let cardIndex = 0;
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
+
+    function saveMastered() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(masteredSet)));
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = RAW_DATA.length;
+      const masteredCount = RAW_DATA.filter(item => masteredSet.has(item.id)).length;
+      const pct = total === 0 ? 0 : Math.round((masteredCount / total) * 100);
+
+      document.getElementById('statsCount').textContent = `顯示 ${currentData.length} / 共 ${total} 題`;
+      document.getElementById('statsMastered').textContent = `已掌握 ${masteredCount} 題 (${pct}%)`;
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    function renderMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function renderList() {
+      const container = document.getElementById('qaList');
+      if (currentData.length === 0) {
+        container.innerHTML = '<div class="empty-state">沒有符合條件的問答卡片</div>';
+        return;
+      }
+
+      container.innerHTML = currentData.map(item => {
+        const isMastered = masteredSet.has(item.id);
+        return `
+          <div class="qa-card ${isMastered ? 'mastered' : ''} ${isAllExpanded ? 'open' : ''}" id="card-${item.id}">
+            <div class="qa-header" onclick="toggleItem(${item.id})">
+              <span class="qa-id">#${item.id}</span>
+              <span class="qa-question">${escapeHtml(item.question)}</span>
+              <div class="qa-actions">
+                <button class="master-btn ${isMastered ? 'is-mastered' : ''}"
+                        onclick="toggleMaster(event, ${item.id})"
+                        title="${isMastered ? '已掌握' : '標記掌握'}">★</button>
+                <span class="expand-icon">▼</span>
+              </div>
+            </div>
+            <div class="qa-answer">${escapeHtml(item.answer)}</div>
+          </div>
+        `;
+      }).join('');
+
+      renderMath();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function toggleItem(id) {
+      const el = document.getElementById('card-' + id);
+      if (el) {
+        el.classList.toggle('open');
+      }
+    }
+
+    function toggleMaster(event, id) {
+      event.stopPropagation();
+      if (masteredSet.has(id)) {
+        masteredSet.delete(id);
+      } else {
+        masteredSet.add(id);
+      }
+      saveMastered();
+      applyFilters();
+    }
+
+    function toggleExpandAll() {
+      isAllExpanded = !isAllExpanded;
+      document.getElementById('expandAllBtn').textContent = isAllExpanded ? "收合全部" : "展開全部";
+      document.querySelectorAll('.qa-card').forEach(card => {
+        if (isAllExpanded) {
+          card.classList.add('open');
+        } else {
+          card.classList.remove('open');
+        }
+      });
+    }
+
+    function toggleFilterMastered() {
+      filterOnlyUnmastered = !filterOnlyUnmastered;
+      const btn = document.getElementById('filterMasteredBtn');
+      btn.classList.toggle('active-filter', filterOnlyUnmastered);
+      btn.textContent = filterOnlyUnmastered ? "✓ 僅顯示未掌握" : "⭐ 只看未掌握";
+      applyFilters();
+    }
+
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      currentData = RAW_DATA.filter(item => {
+        if (filterOnlyUnmastered && masteredSet.has(item.id)) {
+          return false;
+        }
+        if (query) {
+          const matchQ = item.question.toLowerCase().includes(query);
+          const matchA = item.answer.toLowerCase().includes(query);
+          return matchQ || matchA;
+        }
+        return true;
+      });
+
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+      updateStats();
+    }
+
+    function shuffleCards() {
+      currentData.sort(() => Math.random() - 0.5);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function resetOrder() {
+      currentData.sort((a, b) => a.id - b.id);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const listBtn = document.getElementById('listViewBtn');
+      const cardBtn = document.getElementById('cardViewBtn');
+      const qaList = document.getElementById('qaList');
+      const flashcardContainer = document.getElementById('flashcardContainer');
+      const expandAllBtn = document.getElementById('expandAllBtn');
+
+      if (mode === 'list') {
+        listBtn.classList.add('active');
+        cardBtn.classList.remove('active');
+        qaList.style.display = 'flex';
+        flashcardContainer.style.display = 'none';
+        expandAllBtn.style.display = 'inline-flex';
+        renderList();
+      } else {
+        cardBtn.classList.add('active');
+        listBtn.classList.remove('active');
+        qaList.style.display = 'none';
+        flashcardContainer.style.display = 'flex';
+        expandAllBtn.style.display = 'none';
+        updateCardView();
+      }
+    }
+
+    /* Flashcard Functions */
+    function flipCard() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.toggle('flipped');
+    }
+
+    function updateCardView() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.remove('flipped');
+
+      if (currentData.length === 0) {
+        document.getElementById('fcQuestion').textContent = '無卡片資料';
+        document.getElementById('fcAnswer').textContent = '無卡片資料';
+        document.getElementById('fcCardNumber').textContent = '0 / 0';
+        document.getElementById('fcCardNumberBack').textContent = '0 / 0';
+        return;
+      }
+
+      if (cardIndex < 0) cardIndex = 0;
+      if (cardIndex >= currentData.length) cardIndex = currentData.length - 1;
+
+      const item = currentData[cardIndex];
+      const isMastered = masteredSet.has(item.id);
+
+      document.getElementById('fcQuestion').textContent = item.question;
+      document.getElementById('fcAnswer').textContent = item.answer;
+
+      const cardNumText = `卡片 ${cardIndex + 1} / ${currentData.length} (#${item.id})`;
+      document.getElementById('fcCardNumber').textContent = cardNumText;
+      document.getElementById('fcCardNumberBack').textContent = cardNumText;
+
+      const btn1 = document.getElementById('fcMasterBtn');
+      const btn2 = document.getElementById('fcMasterBtnBack');
+      btn1.classList.toggle('is-mastered', isMastered);
+      btn2.classList.toggle('is-mastered', isMastered);
+
+      renderMath();
+    }
+
+    function prevCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex - 1 + currentData.length) % currentData.length;
+      updateCardView();
+    }
+
+    function nextCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex + 1) % currentData.length;
+      updateCardView();
+    }
+
+    function toggleCardMaster(event) {
+      event.stopPropagation();
+      if (currentData.length === 0) return;
+      const item = currentData[cardIndex];
+      toggleMaster(event, item.id);
+      updateCardView();
+    }
+
+    /* Keyboard Shortcuts */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (currentMode === 'card') {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          flipCard();
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          prevCard();
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          nextCard();
+        } else if (e.code === 'KeyM') {
+          e.preventDefault();
+          toggleCardMaster(e);
+        }
+      }
+    });
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      updateStats();
+      renderList();
+      setTimeout(renderMath, 200);
+    });
+  </script>
+</body>
+</html>

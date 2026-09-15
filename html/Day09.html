@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day09 - 問答複習卡</title>
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-light: #eff6ff;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --accent: #f59e0b;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
+      --success: #34d399;
+      --success-light: #064e3b33;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* Navigation / Header */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .view-toggles {
+      display: flex;
+      background: var(--bg-color);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .toggle-btn {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--border-color);
+    }
+
+    .btn.active-filter {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 99px;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* List View Cards */
+    .qa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .qa-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .qa-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .qa-card.mastered {
+      border-left: 4px solid var(--success);
+    }
+
+    .qa-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .qa-id {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .qa-question {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      padding-top: 2px;
+    }
+
+    .qa-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .master-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+      transition: transform 0.15s, color 0.15s;
+    }
+
+    .master-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .master-btn.is-mastered {
+      color: var(--accent);
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .qa-card.open .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    .qa-answer {
+      display: none;
+      padding: 16px 20px 18px 60px;
+      background: var(--bg-color);
+      border-top: 1px dashed var(--border-color);
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    .qa-card.open .qa-answer {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Flashcard Mode */
+    .flashcard-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+    }
+
+    .flashcard-wrapper {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 640px;
+      min-height: 340px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .flashcard-wrapper.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-sizing: border-box;
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .card-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .badge-q {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-a {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .card-body {
+      margin: auto 0;
+      padding: 20px 10px;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .card-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .flashcard-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .flashcard-controls .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .shortcuts-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="nav-left">
+        <a href="index.html" class="back-btn" title="回目錄">← 目錄</a>
+        <h1 class="page-title">Day09 問答卡</h1>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+        <div class="view-toggles">
+          <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
+          <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜尋問題或答案關鍵字..." oninput="handleSearch()">
+      </div>
+      <div class="action-buttons">
+        <button class="btn" id="filterMasteredBtn" onclick="toggleFilterMastered()">⭐ 只看未掌握</button>
+        <button class="btn" id="expandAllBtn" onclick="toggleExpandAll()">展開全部</button>
+        <button class="btn" onclick="shuffleCards()">🔀 隨機洗牌</button>
+        <button class="btn" onclick="resetOrder()">🔄 恢復順序</button>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <span id="statsCount">總計 0 題</span>
+      <div class="progress-bar-container">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <span id="statsMastered">掌握率 0%</span>
+    </div>
+
+    <!-- List View -->
+    <div id="qaList" class="qa-list"></div>
+
+    <!-- Flashcard Mode View -->
+    <div id="flashcardContainer" class="flashcard-container">
+      <div class="flashcard-wrapper" id="flashcardWrapper" onclick="flipCard()">
+        <div class="flashcard-inner">
+          <!-- Front Face -->
+          <div class="flashcard-face flashcard-front">
+            <div class="card-top">
+              <span class="card-badge badge-q">問題</span>
+              <span id="fcCardNumber">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtn" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcQuestion">載入中...</div>
+            <div class="card-hint">💡 點擊卡片或按空白鍵翻面看答案</div>
+          </div>
+          <!-- Back Face -->
+          <div class="flashcard-face flashcard-back">
+            <div class="card-top">
+              <span class="card-badge badge-a">解答</span>
+              <span id="fcCardNumberBack">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtnBack" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcAnswer">載入中...</div>
+            <div class="card-hint">💡 再次點擊卡片翻回正面</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn" onclick="prevCard()">← 上一題</button>
+        <button class="btn btn-primary" onclick="flipCard()">翻轉卡片</button>
+        <button class="btn" onclick="nextCard()">下一題 →</button>
+      </div>
+      <div class="shortcuts-hint">鍵盤快速鍵：[←] 上一題 · [空白鍵] 翻面 · [→] 下一題 · [M] 標記掌握</div>
+    </div>
+  </main>
+
+  <script>
+    const THEME_STORAGE_KEY = "qa_theme";
+    const STORAGE_KEY = "anki_mastered_" + "Day09";
+    const RAW_DATA = [{"id":1,"question":"數位銀行普及的三個核心因素為何？","answer":"便利性、交易速度以及易用性。"},{"id":2,"question":"數位轉型除了便利性外，也增加了網路釣魚、身分盜用及_____等風險。","answer":"帳戶接管（Account takeovers）"},{"id":3,"question":"傳統銀行欺詐預防方法的主要缺陷在於過度依賴基於規則的系統與_____。","answer":"交易後分析（Post-transaction analysis）"},{"id":4,"question":"現有欺詐檢測系統在處理高交易量時，往往面臨決策速度慢及_____過高的問題。","answer":"偽陽性率（False positive rates）"},{"id":5,"question":"「數據分析連續體理論」描述了從描述性分析、預測性分析到_____的演進。","answer":"指示性分析（Prescriptive analytics）"},{"id":6,"question":"在欺詐檢測中，預測性分析的主要功能為何？","answer":"利用歷史與即時數據預測潛在的欺詐風險。"},{"id":7,"question":"指示性分析在風險管理中的關鍵價值為何？","answer":"提供減輕風險的具體建議行動或自動化響應。"},{"id":8,"question":"技術採用理論認為，組織採用創新技術的主要動機是該技術能提供_____。","answer":"可衡量的營運效益（如安全性、效率）"},{"id":9,"question":"Panchal (2025) 提出的框架中，異常交易識別後會產生什麼數值？","answer":"欺詐風險評分（Fraud risk scores）"},{"id":10,"question":"指示性分析組件可能會針對高風險交易建議哪些具體行動？","answer":"額外身份驗證、臨時凍結帳戶或發出調查警報。"},{"id":11,"question":"實施實時欺詐檢測框架對銀行的商業價值之一是減少_____成本。","answer":"手動調查（Manual investigations）"},{"id":12,"question":"在 AI 驅動的銀行系統中，必須考慮的倫理問題包括數據隱私與_____。","answer":"演算法偏見（Algorithmic bias）"},{"id":13,"question":"實施實時分析系統的主要技術挑戰包括高昂的初期成本及與_____的相容性。","answer":"遺留系統（Legacy systems）"},{"id":14,"question":"數據管道中若存在不完整或不準確的交易紀錄，會導致_____問題並損害模型精度。","answer":"數據質量（Data Quality）"},{"id":15,"question":"傳統欺詐檢測與指示性分析框架相比，前者在速度和_____方面表現較差。","answer":"自動化程度（Automation）"},{"id":16,"question":"Baton Systems 指出，銀行管理已清算衍生品擔保品時面臨的挑戰包括_____數據源的分析困難。","answer":"異構數據源（Disparate data sources）"},{"id":17,"question":"在擔保品管理中，確定資產是否符合特定中央結算對手方（CCP）的要求稱為_____管理。","answer":"資格標準管理（Eligibility criteria management）"},{"id":18,"question":"Baton 的 Core-Collateral 解決方案透過_____主要 CCP 的數據來實現決策優化。","answer":"實時聚合（Real-time aggregation）"},{"id":19,"question":"自動化擔保品管理流程可以讓團隊將精力從例行公事轉向_____。","answer":"戰略性倡議（Strategic initiatives）"},{"id":20,"question":"擔保品管理軟體透過提供透明的追蹤與報告功能來支持銀行的_____工作。","answer":"監管合規（Regulatory compliance）"},{"id":21,"question":"銀行信用風險管理正經歷從主觀判斷到_____的轉型。","answer":"客觀分析（Objective analysis）"},{"id":22,"question":"風險度量方法正從定性評估轉向_____，例如使用 CreditMetrics 模型。","answer":"定量測量（Quantitative measurement）"},{"id":23,"question":"傳統風險管理中，由於獲取資訊的週期長，導致管理模式偏向_____管理。","answer":"靜態管理（Static management）"},{"id":24,"question":"數位化轉型使銀行能夠強化對借款人信用風險的_____監測。","answer":"動態監控（Dynamic monitoring）"},{"id":25,"question":"在中國的金融體系中，預計長期內_____仍將是緩釋信用風險的主要起點。","answer":"抵押品（Collateral）"},{"id":26,"question":"隨著經濟轉型，銀行抵押品正從房地產等實體資產擴展到_____資產。","answer":"權益類無形資產（Equity intangible assets）"},{"id":27,"question":"借款人的信用價值和_____現在可被視為新型的無形抵押資產。","answer":"數據資產（Data assets）"},{"id":28,"question":"數位技術能縮短根據財務會計數據估計資產價值的_____性。","answer":"延遲性（Delay）"},{"id":29,"question":"利用_____技術可以加強對信貸資金流向的監控，防止貸款被挪用。","answer":"知識圖譜（Knowledge graphs）"},{"id":30,"question":"金融科技（Fintech）是基於大數據、雲端運算、人工智慧及_____的業務模式。","answer":"區塊鏈（Blockchain）"},{"id":31,"question":"銀行數據治理的四個面向包括標準化、安全控制、質量控制及_____。","answer":"監管報送（Regulatory submission）"},{"id":32,"question":"決策樹技術在銀行風險管理中的一個顯著優點是其學習過程不需要使用者具備深厚的_____。","answer":"背景知識（Background knowledge）"},{"id":33,"question":"決策樹模型的_____使得銀行經理能清楚理解風險評估背後的邏輯。","answer":"透明度與可解釋性（Transparency and interpretability）"},{"id":34,"question":"GUO 等人 (2024) 的研究中，使用的是哪種具體的決策樹演算法？","answer":"C5.0 演算法"},{"id":35,"question":"在 C5.0 貸款風險模型中，最重要的兩個特徵是支票帳戶餘額與_____。","answer":"儲蓄帳戶餘額（Savings balance）"},{"id":36,"question":"研究顯示，若借款人的支票帳戶餘額大於 $200$ DM 或未知，通常被分類為_____。","answer":"不太可能違約（Unlikely to default）"},{"id":37,"question":"在決策樹中，儲蓄帳戶餘額小於 $100$ DM 且信用記錄優良的借款人可能被視為_____。","answer":"極有可能違約（Very likely to default）"},{"id":38,"question":"GUO 等人構建的 C5.0 決策樹模型最終的分類錯誤率是多少？","answer":"$14.9\\%$"},{"id":39,"question":"所謂的「第一類錯誤（偽陽性）」是指將未違約的貸款錯誤分類為_____。","answer":"已違約（Defaulted）"},{"id":40,"question":"所謂的「第二類錯誤（偽陰性）」是指將實際已違約的貸款錯誤分類為_____。","answer":"未違約（Not defaulted）"},{"id":41,"question":"McKinsey 估計，AI 技術每年可為全球銀行業帶來高達多少美元的額外價值？","answer":"$1$ 兆美元"},{"id":42,"question":"全球約有_____的銀行賺取的股權回報率（ROE）無法覆蓋其股權成本。","answer":"四分之三（$75\\%$）"},{"id":43,"question":"「AI 首位」（AI-first）銀行的核心能力堆棧包含哪四個層級？","answer":"客戶參與層、AI 驅動決策層、核心技術與數據層、平台營運模式層。"},{"id":44,"question":"AI 銀行參與層的目標是提供智慧化、個人化及_____的客戶體驗。","answer":"全通路（Omnichannel）"},{"id":45,"question":"未來 AI 銀行的技術架構需要具備_____、韌性及適應性。","answer":"可擴展性（Scalability）"},{"id":46,"question":"AI 銀行的決策層利用機器學習模型將實時洞察轉化為精確的_____。","answer":"客戶溝通訊息（Messages）"},{"id":47,"question":"為了實現持續的數據交換，銀行技術層需要採用 API 與_____架構。","answer":"流式處理架構（Streaming architecture）"},{"id":48,"question":"AI 銀行的營運模式需要打破職能孤島，建立跨職能的_____。","answer":"敏捷團隊（Agile teams）"},{"id":49,"question":"數位生態系統的發展正導致傳統金融服務面臨_____的風險。","answer":"去中介化（Disintermediating）"},{"id":50,"question":"McKinsey 指出，銀行轉型為 AI 首位的障礙之一是數據資產的_____。","answer":"碎片化（Fragmented）"},{"id":51,"question":"在指示性分析系統中，「自學習」能力主要透過人工智慧與_____實現。","answer":"機器學習（Machine Learning）"},{"id":52,"question":"傳統的抵押品管理流程缺乏透明度且缺乏_____追蹤，導致操作風險增加。","answer":"實時追蹤（Real-time tracking）"},{"id":53,"question":"Core-Collateral 系統的一大特色是能自動化分析複雜的_____準則。","answer":"資產資格（Asset eligibility）"},{"id":54,"question":"信用風險預警模型的主要目的是優化資源配置並降低_____。","answer":"壞帳率（Bad debt rates）"},{"id":55,"question":"C5.0 決策樹模型在實驗中由多少個決策節點組成？","answer":"$45$ 個"},{"id":56,"question":"實驗數據顯示，貸款期限通常集中在 $12$ 到 $24$ 個月，最長可達_____個月。","answer":"$72$ 個月"},{"id":57,"question":"研究樣本中，實際發生違約的比例（違約率）是多少？","answer":"$30\\%$"},{"id":58,"question":"McKinsey 提出的 AI 銀行轉型藍圖中，第一個建議的步驟為何？","answer":"制定組織在 AI 時代的戰略目標。"},{"id":59,"question":"銀行應將資本資源投入開發能使其與競爭對手區隔開來的_____能力。","answer":"差異化（Differentiating）"},{"id":60,"question":"「超級應用程式」（Super apps）透過在客戶旅程中_____金融服務來競爭。","answer":"嵌入（Embedding）"},{"id":61,"question":"所謂的「微笑支付」是利用哪種技術來啟動交易？","answer":"面部掃描（Facial scanning）"},{"id":62,"question":"指示性分析能協助解決預測性分析僅能告知「可能發生什麼」而無法告知「_____」的問題。","answer":"該做什麼（What to do）"},{"id":63,"question":"數位轉型能緩解信用雙方之間的_____，從而提升借款人的信用。","answer":"資訊不對稱（Information asymmetry）"},{"id":64,"question":"銀行業務產品呈現出線上化、場景化、智慧化及_____四個趨勢。","answer":"個性化（Personalized）"},{"id":65,"question":"在 C5.0 模型中，若支票帳戶餘額小於 $0$ DM 或在 $0-200$ DM 之間，系統會如何處理？","answer":"需要進一步分類以確定違約可能性。"},{"id":66,"question":"數據分析團隊中的「翻譯者」（Translator）角色其職責為何？","answer":"連接業務與技術利益相關者。"},{"id":67,"question":"指示性分析框架的長期效益包括增強客戶對電子金融服務的_____。","answer":"信任與信心（Confidence and trust）"},{"id":68,"question":"未來研究方向之一是將區塊鏈與_____結合，以增加交易透明度。","answer":"指示性分析環境（Prescriptive analytics environment）"},{"id":69,"question":"C5.0 模型測試中，總計 $900$ 個訓練案例中有多少例被正確分類？","answer":"$766$ 例"},{"id":70,"question":"預測性分析在數位銀行中的優勢是能在發生_____之前識別可疑模式。","answer":"財務損失（Financial losses）"},{"id":71,"question":"銀行應如何處理非差異化（Nondifferentiating）的能力？","answer":"考慮利用合作夥伴關係（Partnerships）。"},{"id":72,"question":"「全通路體驗」意味著客戶在物理環境與_____之間能獲得一致的服務。","answer":"線上環境（Online contexts）"},{"id":73,"question":"AI 銀行架構中的核心數據基礎設施應支持_____，以實現實時數據處理。","answer":"自動化雲端供應（Automated cloud provisioning）"},{"id":74,"question":"在決策樹中，從根節點到葉節點的路徑對應於一條合理的_____。","answer":"分類規則（Classification rule）"},{"id":75,"question":"數位化如何幫助改善銀行的貸後管理？","answer":"透過實時監控信貸資金流向與貸款實際用途。"},{"id":76,"question":"指示性分析系統能透過_____不斷優化其檢測欺詐的準確性。","answer":"持續學習（Ongoing optimization/learning）"},{"id":77,"question":"對於零售客戶，AI 銀行可以根據_____推薦附近的咖啡店。","answer":"消費模式（Spending patterns）"},{"id":78,"question":"對於中小企業客戶，AI 銀行可以整合其_____以優化庫存管理。","answer":"業務管理系統（Business management systems）"},{"id":79,"question":"在信用評估中，公務員貸款雖無實體抵押，但可視為以其_____作為抵押。","answer":"信用價值（Credit value，如名譽及未來收入）"},{"id":80,"question":"預測性分析使用的機器學習技術包括決策樹、支持向量機及_____。","answer":"神經網路（Neural networks）"},{"id":81,"question":"未來銀行的「智慧服務」應包含能無縫嵌入_____的功能。","answer":"合作夥伴生態系統（Partner ecosystems）"},{"id":82,"question":"銀行建立數據平台是為了連接前、中、後台的_____。","answer":"業務部門（Business departments）"},{"id":83,"question":"指示性分析系統推薦的行動應基於預測的_____。","answer":"風險可能性（Probability/Likelihood）"},{"id":84,"question":"指示性分析框架在業務層面能透過減少_____來提高滿意度。","answer":"錯誤的欺詐警報（False positive alerts）"},{"id":85,"question":"銀行在進行數位轉型時，應重點評估 AI 技術如何支持其_____。","answer":"戰略目標（Strategic goals）"}];
+    let currentData = [...RAW_DATA];
+    let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+    let currentMode = 'list';
+    let filterOnlyUnmastered = false;
+    let isAllExpanded = false;
+    let cardIndex = 0;
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
+
+    function saveMastered() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(masteredSet)));
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = RAW_DATA.length;
+      const masteredCount = RAW_DATA.filter(item => masteredSet.has(item.id)).length;
+      const pct = total === 0 ? 0 : Math.round((masteredCount / total) * 100);
+
+      document.getElementById('statsCount').textContent = `顯示 ${currentData.length} / 共 ${total} 題`;
+      document.getElementById('statsMastered').textContent = `已掌握 ${masteredCount} 題 (${pct}%)`;
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    function renderMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function renderList() {
+      const container = document.getElementById('qaList');
+      if (currentData.length === 0) {
+        container.innerHTML = '<div class="empty-state">沒有符合條件的問答卡片</div>';
+        return;
+      }
+
+      container.innerHTML = currentData.map(item => {
+        const isMastered = masteredSet.has(item.id);
+        return `
+          <div class="qa-card ${isMastered ? 'mastered' : ''} ${isAllExpanded ? 'open' : ''}" id="card-${item.id}">
+            <div class="qa-header" onclick="toggleItem(${item.id})">
+              <span class="qa-id">#${item.id}</span>
+              <span class="qa-question">${escapeHtml(item.question)}</span>
+              <div class="qa-actions">
+                <button class="master-btn ${isMastered ? 'is-mastered' : ''}"
+                        onclick="toggleMaster(event, ${item.id})"
+                        title="${isMastered ? '已掌握' : '標記掌握'}">★</button>
+                <span class="expand-icon">▼</span>
+              </div>
+            </div>
+            <div class="qa-answer">${escapeHtml(item.answer)}</div>
+          </div>
+        `;
+      }).join('');
+
+      renderMath();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function toggleItem(id) {
+      const el = document.getElementById('card-' + id);
+      if (el) {
+        el.classList.toggle('open');
+      }
+    }
+
+    function toggleMaster(event, id) {
+      event.stopPropagation();
+      if (masteredSet.has(id)) {
+        masteredSet.delete(id);
+      } else {
+        masteredSet.add(id);
+      }
+      saveMastered();
+      applyFilters();
+    }
+
+    function toggleExpandAll() {
+      isAllExpanded = !isAllExpanded;
+      document.getElementById('expandAllBtn').textContent = isAllExpanded ? "收合全部" : "展開全部";
+      document.querySelectorAll('.qa-card').forEach(card => {
+        if (isAllExpanded) {
+          card.classList.add('open');
+        } else {
+          card.classList.remove('open');
+        }
+      });
+    }
+
+    function toggleFilterMastered() {
+      filterOnlyUnmastered = !filterOnlyUnmastered;
+      const btn = document.getElementById('filterMasteredBtn');
+      btn.classList.toggle('active-filter', filterOnlyUnmastered);
+      btn.textContent = filterOnlyUnmastered ? "✓ 僅顯示未掌握" : "⭐ 只看未掌握";
+      applyFilters();
+    }
+
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      currentData = RAW_DATA.filter(item => {
+        if (filterOnlyUnmastered && masteredSet.has(item.id)) {
+          return false;
+        }
+        if (query) {
+          const matchQ = item.question.toLowerCase().includes(query);
+          const matchA = item.answer.toLowerCase().includes(query);
+          return matchQ || matchA;
+        }
+        return true;
+      });
+
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+      updateStats();
+    }
+
+    function shuffleCards() {
+      currentData.sort(() => Math.random() - 0.5);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function resetOrder() {
+      currentData.sort((a, b) => a.id - b.id);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const listBtn = document.getElementById('listViewBtn');
+      const cardBtn = document.getElementById('cardViewBtn');
+      const qaList = document.getElementById('qaList');
+      const flashcardContainer = document.getElementById('flashcardContainer');
+      const expandAllBtn = document.getElementById('expandAllBtn');
+
+      if (mode === 'list') {
+        listBtn.classList.add('active');
+        cardBtn.classList.remove('active');
+        qaList.style.display = 'flex';
+        flashcardContainer.style.display = 'none';
+        expandAllBtn.style.display = 'inline-flex';
+        renderList();
+      } else {
+        cardBtn.classList.add('active');
+        listBtn.classList.remove('active');
+        qaList.style.display = 'none';
+        flashcardContainer.style.display = 'flex';
+        expandAllBtn.style.display = 'none';
+        updateCardView();
+      }
+    }
+
+    /* Flashcard Functions */
+    function flipCard() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.toggle('flipped');
+    }
+
+    function updateCardView() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.remove('flipped');
+
+      if (currentData.length === 0) {
+        document.getElementById('fcQuestion').textContent = '無卡片資料';
+        document.getElementById('fcAnswer').textContent = '無卡片資料';
+        document.getElementById('fcCardNumber').textContent = '0 / 0';
+        document.getElementById('fcCardNumberBack').textContent = '0 / 0';
+        return;
+      }
+
+      if (cardIndex < 0) cardIndex = 0;
+      if (cardIndex >= currentData.length) cardIndex = currentData.length - 1;
+
+      const item = currentData[cardIndex];
+      const isMastered = masteredSet.has(item.id);
+
+      document.getElementById('fcQuestion').textContent = item.question;
+      document.getElementById('fcAnswer').textContent = item.answer;
+
+      const cardNumText = `卡片 ${cardIndex + 1} / ${currentData.length} (#${item.id})`;
+      document.getElementById('fcCardNumber').textContent = cardNumText;
+      document.getElementById('fcCardNumberBack').textContent = cardNumText;
+
+      const btn1 = document.getElementById('fcMasterBtn');
+      const btn2 = document.getElementById('fcMasterBtnBack');
+      btn1.classList.toggle('is-mastered', isMastered);
+      btn2.classList.toggle('is-mastered', isMastered);
+
+      renderMath();
+    }
+
+    function prevCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex - 1 + currentData.length) % currentData.length;
+      updateCardView();
+    }
+
+    function nextCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex + 1) % currentData.length;
+      updateCardView();
+    }
+
+    function toggleCardMaster(event) {
+      event.stopPropagation();
+      if (currentData.length === 0) return;
+      const item = currentData[cardIndex];
+      toggleMaster(event, item.id);
+      updateCardView();
+    }
+
+    /* Keyboard Shortcuts */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (currentMode === 'card') {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          flipCard();
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          prevCard();
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          nextCard();
+        } else if (e.code === 'KeyM') {
+          e.preventDefault();
+          toggleCardMaster(e);
+        }
+      }
+    });
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      updateStats();
+      renderList();
+      setTimeout(renderMath, 200);
+    });
+  </script>
+</body>
+</html>
