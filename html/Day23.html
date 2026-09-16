@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day23 - 問答複習卡</title>
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-light: #eff6ff;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --accent: #f59e0b;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
+      --success: #34d399;
+      --success-light: #064e3b33;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* Navigation / Header */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .view-toggles {
+      display: flex;
+      background: var(--bg-color);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .toggle-btn {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--border-color);
+    }
+
+    .btn.active-filter {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 99px;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* List View Cards */
+    .qa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .qa-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .qa-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .qa-card.mastered {
+      border-left: 4px solid var(--success);
+    }
+
+    .qa-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .qa-id {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .qa-question {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      padding-top: 2px;
+    }
+
+    .qa-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .master-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+      transition: transform 0.15s, color 0.15s;
+    }
+
+    .master-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .master-btn.is-mastered {
+      color: var(--accent);
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .qa-card.open .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    .qa-answer {
+      display: none;
+      padding: 16px 20px 18px 60px;
+      background: var(--bg-color);
+      border-top: 1px dashed var(--border-color);
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    .qa-card.open .qa-answer {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Flashcard Mode */
+    .flashcard-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+    }
+
+    .flashcard-wrapper {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 640px;
+      min-height: 340px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .flashcard-wrapper.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-sizing: border-box;
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .card-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .badge-q {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-a {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .card-body {
+      margin: auto 0;
+      padding: 20px 10px;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .card-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .flashcard-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .flashcard-controls .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .shortcuts-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="nav-left">
+        <a href="index.html" class="back-btn" title="回目錄">← 目錄</a>
+        <h1 class="page-title">Day23 問答卡</h1>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+        <div class="view-toggles">
+          <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
+          <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜尋問題或答案關鍵字..." oninput="handleSearch()">
+      </div>
+      <div class="action-buttons">
+        <button class="btn" id="filterMasteredBtn" onclick="toggleFilterMastered()">⭐ 只看未掌握</button>
+        <button class="btn" id="expandAllBtn" onclick="toggleExpandAll()">展開全部</button>
+        <button class="btn" onclick="shuffleCards()">🔀 隨機洗牌</button>
+        <button class="btn" onclick="resetOrder()">🔄 恢復順序</button>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <span id="statsCount">總計 0 題</span>
+      <div class="progress-bar-container">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <span id="statsMastered">掌握率 0%</span>
+    </div>
+
+    <!-- List View -->
+    <div id="qaList" class="qa-list"></div>
+
+    <!-- Flashcard Mode View -->
+    <div id="flashcardContainer" class="flashcard-container">
+      <div class="flashcard-wrapper" id="flashcardWrapper" onclick="flipCard()">
+        <div class="flashcard-inner">
+          <!-- Front Face -->
+          <div class="flashcard-face flashcard-front">
+            <div class="card-top">
+              <span class="card-badge badge-q">問題</span>
+              <span id="fcCardNumber">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtn" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcQuestion">載入中...</div>
+            <div class="card-hint">💡 點擊卡片或按空白鍵翻面看答案</div>
+          </div>
+          <!-- Back Face -->
+          <div class="flashcard-face flashcard-back">
+            <div class="card-top">
+              <span class="card-badge badge-a">解答</span>
+              <span id="fcCardNumberBack">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtnBack" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcAnswer">載入中...</div>
+            <div class="card-hint">💡 再次點擊卡片翻回正面</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn" onclick="prevCard()">← 上一題</button>
+        <button class="btn btn-primary" onclick="flipCard()">翻轉卡片</button>
+        <button class="btn" onclick="nextCard()">下一題 →</button>
+      </div>
+      <div class="shortcuts-hint">鍵盤快速鍵：[←] 上一題 · [空白鍵] 翻面 · [→] 下一題 · [M] 標記掌握</div>
+    </div>
+  </main>
+
+  <script>
+    const THEME_STORAGE_KEY = "qa_theme";
+    const STORAGE_KEY = "anki_mastered_" + "Day23";
+    const RAW_DATA = [{"id":1,"question":"在風控場景中，為了研究單一變量對系統輸出的影響而保持其他變量不變的方法稱為什麼？","answer":"控制變量法。"},{"id":2,"question":"風控部門常用於替代「A/B 測試」這一通用稱呼的術語是什麼？","answer":"冠軍挑戰者 (Champion/Challenger)。"},{"id":3,"question":"在 A/B 測試中，保持原狀、不改變輸入變量的樣本組稱為什麼？","answer":"對照組 (Control Group)。"},{"id":4,"question":"A/B 測試的核心機制是 _____，目的是確保實驗組與對照組在已知與未知因素上分佈一致。","answer":"隨機化 (Randomization)"},{"id":5,"question":"在假設檢定中，預設「新舊版本沒有真實差異」的假設稱為什麼？","answer":"虛無假設 ($H_0$ / Null Hypothesis)。"},{"id":6,"question":"p-value 的精確定義是什麼？","answer":"在 $H_0$ 為真的前提下，觀測到至少如此極端結果的機率。"},{"id":7,"question":"當 p-value 小於預設的顯著水準 $\\alpha$（通常為 $0.05$）時，在統計上應如何處理 $H_0$？","answer":"拒絕虛無假設 ($H_0$)，認定差異具有統計顯著性。"},{"id":8,"question":"型一錯誤 (Type I Error) 的定義為何？","answer":"$H_0$ 為真但錯誤地拒絕 $H_0$（偽陽性）。"},{"id":9,"question":"型二錯誤 (Type II Error) 的定義為何？","answer":"$H_1$ 為真但未能成功拒絕 $H_0$（偽陰性）。"},{"id":10,"question":"統計效力 (Statistical Power) 的數學表示式為何？","answer":"$1 - \\beta$（其中 $\\beta$ 為型二錯誤率）。"},{"id":11,"question":"業界通常要求 A/B 測試的統計效力 (Power) 至少達到多少？","answer":"$80\\%$。"},{"id":12,"question":"計算 A/B 測試樣本量時，MDE 代表什麼意思？","answer":"最小可偵測效果 (Minimum Detectable Effect)。"},{"id":13,"question":"在實驗過程中不斷查看 p-value 並在達到顯著時立即停止，會導致什麼問題？","answer":"提早停止問題 (Peeking Problem)，這會大幅增加型一錯誤率。"},{"id":14,"question":"同時測試多個變體（如 A/B/C/D）時，若不進行校正會面臨什麼風險？","answer":"多重比較問題 (Multiple Comparison Problem)，增加偽陽性機率。"},{"id":15,"question":"Bonferroni 校正如何處理多重比較問題？","answer":"將顯著性閾值 $\\alpha$ 除以測試的變體數量。"},{"id":16,"question":"什麼現象描述了「整體數據顯示 B 更好，但各子組分析卻顯示 A 更好」的統計悖論？","answer":"辛普森悖論 (Simpson's Paradox)。"},{"id":17,"question":"Netflix 與 Spotify 常用於快速迭代推薦系統、將多個模型結果交叉混合的實驗方法稱為什麼？","answer":"交叉實驗 (Interleaving)。"},{"id":18,"question":"Revolut 使用哪種技術透過在關係數據上堆疊數學運算來自動生成特徵？","answer":"深度特徵合成 (Deep Feature Synthesis, DFS)。"},{"id":19,"question":"在特徵選擇中，MIV 代表什麼？","answer":"邊際信息價值 (Marginal Information Value)。"},{"id":20,"question":"特徵選擇指標 IV (Information Value) 若小於 $0.02$，代表該變量的預測能力為何？","answer":"預測能力貧乏 (Poor predictive power)。"},{"id":21,"question":"為了提升變量穩定性並處理非線性關係，通常將連續變量進行 _____ 處理。","answer":"粗分箱 (Coarse Binning)"},{"id":22,"question":"Weight of Evidence (WoE) 的計算公式為何？","answer":"$WoE(a) = \\ln(\\frac{P(X=a|Bad)}{P(X=a|Good)})$。"},{"id":23,"question":"WoE 轉換的主要優點之一是能將特徵與目標變量的對數勝算 (log-odds) 關係 _____。","answer":"線性化 (Linearize)"},{"id":24,"question":"在風控模型中，區分「違約/非違約」排序能力的評估指標通常使用 _____。","answer":"Gini 係數 (Gini Coefficient)"},{"id":25,"question":"Brier Score 用於衡量什麼？","answer":"實際觀測結果與預測概率之間的均方誤差（數值越小越好）。"},{"id":26,"question":"將排名得分 (Rank-ordering score) 轉換為準確違約概率 (PD) 的過程稱為什麼？","answer":"概率校準 (PD Calibration)。"},{"id":27,"question":"模型監控指標 PSI 代表什麼？","answer":"群體穩定性指標 (Population Stability Index)。"},{"id":28,"question":"在 A/B 測試的技術實現中，使用 _____ 函數處理用戶 ID 可以確保「黏性會話」式的分組。","answer":"哈希 (Hash)"},{"id":29,"question":"「陰影模式」(Shadow Mode) 在風控模型測試中的作用是什麼？","answer":"同時執行 Champion 與 Challenger 模型，捕獲兩者結果進行對比而不影響實際決策。"},{"id":30,"question":"JSD (Jensen-Shannon Divergence) 相對於 KLD 的一個主要優勢是什麼？","answer":"具有對稱性且值是有界的（最大值為 $\\ln 2$）。"},{"id":31,"question":"根據研究，當樣本量足夠大時，PSI 指標服從自由度為 $B-1$ 的 _____ 分佈。","answer":"卡方分佈 ($\\chi^2$ distribution)"},{"id":32,"question":"對於 JSD 與 KLD 的卡方近似，建議的最小樣本量 $min(n, m)$ 應大於等於多少？","answer":"$400$。"},{"id":33,"question":"在使用卡方檢定監控分佈時，每個分箱 (Bin) 的預期觀察數至少應為多少？","answer":"$5$（保守建議為 $10$）。"},{"id":34,"question":"統計研究指出，在 $H_0$ 下，JSD 約等於幾分之幾倍的 KLD？","answer":"四分之一 ($\\frac{1}{4}$)。"},{"id":35,"question":"在信用風險模型中，處理未被授信申請者數據以避免樣本偏差的方法稱為什麼？","answer":"拒絕推斷 (Reject Inference)。"},{"id":36,"question":"哪種概率校準方法特別適合大樣本，且能捕捉非單調關係？","answer":"保序回歸 (Isotonic Regression)。"},{"id":37,"question":"在 A/B 測試中，「新鮮感效應」(Novelty Effect) 指的是什麼？","answer":"用戶對改變的初始反應往往比長期反應更誇張，導致短期效果不可持續。"},{"id":38,"question":"為了防止 AI 推薦算法雖然提升了轉換率但導致退貨率上升，應設定 _____ 指標。","answer":"護欄指標 (Guardrail Metrics)"},{"id":39,"question":"當一個特徵的 WoE 值接近 $0$ 時，代表該類別的預測力為何？","answer":"幾乎沒有區分好壞客戶的能力。"},{"id":40,"question":"MIV 特徵選擇過程通常伴隨哪種閾值以確保特徵間不具備高度多重共線性？","answer":"皮爾森相關係數閾值 (Pearson correlation threshold)。"},{"id":41,"question":"在 Revolut 的模型開發生命週期中，Rank-Ordering 與 PD Calibration 是 _____ 開發的。","answer":"分開 (Separately)"},{"id":42,"question":"什麼指標可以用來決定預測時間窗口 (Prediction Horizon) 是否足夠長？","answer":"累計違約率曲線 (Cumulative Bad Rate Curves)。"},{"id":43,"question":"DFS 特徵生成中，應用聚合函數（如 $min, max$）處理一對多關係的特徵稱為什麼？","answer":"關係特徵 (Relational features / rfeat)。"},{"id":44,"question":"在風控 A/B 測試中，為了防範重大損失，建議先將新策略應用於多大比例的流量？","answer":"極小片段（如 $1\\% - 5\\%$）。"},{"id":45,"question":"決策引擎 (BRE) 的主要優勢是將 _____ 與應用程序代碼解耦。","answer":"業務邏輯 (Business Logic)"},{"id":46,"question":"在分層分析 (Subgroup Analysis) 中，目的是發現什麼？","answer":"被總體效果掩蓋的子群體差異或傷害。"},{"id":47,"question":"KLD (Kullback-Leibler Divergence) 的一個缺點是它不具備 _____，即 $D(P||Q) \\ne D(Q||P)$。","answer":"對稱性"},{"id":48,"question":"若信用評分模型更新後，在不增加壞帳的前提下提高了核准率，這體現了什麼效應？","answer":"正向選擇 (Positive Selection)。"},{"id":49,"question":"Brier Score 的計算公式為何？","answer":"$\\frac{1}{N} \\sum_{i=1}^{N} (y_i - \\hat{p}_i)^2$。"},{"id":50,"question":"在風控場景，若無法確定規則調整方向，A/B 測試可以扮演什麼角色？","answer":"導航系統與說理工具。"},{"id":51,"question":"對於偏態分佈的違約概率 (PD)，構建分箱時應避免使用哪種方式？","answer":"等寬分箱 (Equal-width bins)。"},{"id":52,"question":"JSD 統計檢定在小樣本下比 PSI 或 KLD 更具 _____，即較不容易產生偽陽性。","answer":"保守性 (Conservative)"},{"id":53,"question":"在 Revolut 的案例中，新模型上線後除了銷量增加，哪項財務指標也隨之提升？","answer":"風險調整後資本回報率 (RAROC)。"},{"id":54,"question":"哪種特徵生成技術使用進化算法將特徵演化為數學表達式，但可能導致缺乏解釋性？","answer":"遺傳編程 (Genetic Programming, GP)。"},{"id":55,"question":"進行 A/B 測試時，避開重大促銷節點（如雙 11）是為了消除什麼干擾？","answer":"季節性效應與異常流量高峰。"},{"id":56,"question":"在決策流中，若要根據 testGroup 變量選擇不同的評分卡，這屬於哪種 A/B 測試模式？","answer":"規則外控制（流程控制模式）。"},{"id":57,"question":"在進行特徵監控時，「殘差監控」(Residual Monitoring) 的主要目的是什麼？","answer":"檢查是否有新生成的特徵能對現有模型提供額外的預測價值。"},{"id":58,"question":"概念：Reject Referencing","answer":"定義：利用外部數據（如徵信局）獲取被本行拒絕但在他行獲得信貸者的表現數據。"},{"id":59,"question":"在 PD 模型開發中，排除觀察時間不足、無法定義好壞的帳戶，這稱為處理 _____ 數據。","answer":"右刪失 (Censored)"},{"id":60,"question":"MIV 的計算過程中，$WoE_{expected}$ 是基於什麼計算的？","answer":"當前模型的分數（Incumbent model's scores）。"},{"id":61,"question":"在 A/B 測試中，為了平衡風險與檢測效率，可以使用哪種假設檢定方法進行即時監控？","answer":"循序假設檢定 (Sequential Testing)。"},{"id":62,"question":"「統計顯著」是否等同於「業務重要」？","answer":"不等同。大樣本下微小差異也可能顯著，決策應看效果量與業務價值。"},{"id":63,"question":"在 Python 或 R 中計算樣本量時，除了雙比例 Z 檢定，通常還需指定 _____（單尾或雙尾）。","answer":"檢定方向"},{"id":64,"question":"為什麼在 JSD 計算中不需要擔心分箱為空的問題？","answer":"因為它使用混合分佈 $Q = (P+Q)/2$，確保對數項的分母不為零。"},{"id":65,"question":"在信用評分卡中，WoE 為正值通常代表該類別的風險比平均值 _____。","answer":"高 (Higher risk)"},{"id":66,"question":"對於結構性信用風險模型，哪種模型引入了跳躍過程以捕捉市場的不連續變動？","answer":"Merton 躍遷模型 (Merton with Jump)。"},{"id":67,"question":"在進行分箱合併時，若兩個連續分箱的違約率趨勢發生逆轉且無法合理解釋，應如何處理？","answer":"將這兩個分箱合併以確保單調性或穩定性。"},{"id":68,"question":"在 DecisionRules 模板中，如何定義 Challenger 策略應用於 $10\\%$ 的流量？","answer":"在決策表中指定偽隨機數範圍（如 $0$ 到 $9$）。"},{"id":69,"question":"當 A/B 測試的主要指標提升但護欄指標顯著惡化時，正確的決策建議為何？","answer":"不應全面推廣，需進一步分析負面影響的根源。"},{"id":70,"question":"MIV 的數學基礎源自於 _____ 理論。","answer":"信息論 (Information Theory)"},{"id":71,"question":"在 Revolut 案例中，哪種模型在處理替代數據 (Alternative Data) 時優於邏輯回歸？","answer":"樹集成模型 (Tree Ensembles)。"},{"id":72,"question":"在統計學中，判定觀察到的差異是否僅由隨機性引起的嚴謹框架稱為什麼？","answer":"假設檢定 (Hypothesis Testing)。"},{"id":73,"question":"IV 值處於 $0.1$ 至 $0.3$ 之間，代表特徵的預測能力為 _____。","answer":"中等預測能力 (Medium predictive power)"},{"id":74,"question":"在風控策略 A/B 測試閉環中，最後一個步驟通常是什麼？","answer":"策略調整與迭代。"},{"id":75,"question":"卡方分佈的自由度 $df$ 在分佈差異檢定中通常由什麼決定？","answer":"分箱數量減一 ($B-1$)。"}];
+    let currentData = [...RAW_DATA];
+    let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+    let currentMode = 'list';
+    let filterOnlyUnmastered = false;
+    let isAllExpanded = false;
+    let cardIndex = 0;
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
+
+    function saveMastered() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(masteredSet)));
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = RAW_DATA.length;
+      const masteredCount = RAW_DATA.filter(item => masteredSet.has(item.id)).length;
+      const pct = total === 0 ? 0 : Math.round((masteredCount / total) * 100);
+
+      document.getElementById('statsCount').textContent = `顯示 ${currentData.length} / 共 ${total} 題`;
+      document.getElementById('statsMastered').textContent = `已掌握 ${masteredCount} 題 (${pct}%)`;
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    function renderMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function renderList() {
+      const container = document.getElementById('qaList');
+      if (currentData.length === 0) {
+        container.innerHTML = '<div class="empty-state">沒有符合條件的問答卡片</div>';
+        return;
+      }
+
+      container.innerHTML = currentData.map(item => {
+        const isMastered = masteredSet.has(item.id);
+        return `
+          <div class="qa-card ${isMastered ? 'mastered' : ''} ${isAllExpanded ? 'open' : ''}" id="card-${item.id}">
+            <div class="qa-header" onclick="toggleItem(${item.id})">
+              <span class="qa-id">#${item.id}</span>
+              <span class="qa-question">${escapeHtml(item.question)}</span>
+              <div class="qa-actions">
+                <button class="master-btn ${isMastered ? 'is-mastered' : ''}"
+                        onclick="toggleMaster(event, ${item.id})"
+                        title="${isMastered ? '已掌握' : '標記掌握'}">★</button>
+                <span class="expand-icon">▼</span>
+              </div>
+            </div>
+            <div class="qa-answer">${escapeHtml(item.answer)}</div>
+          </div>
+        `;
+      }).join('');
+
+      renderMath();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function toggleItem(id) {
+      const el = document.getElementById('card-' + id);
+      if (el) {
+        el.classList.toggle('open');
+      }
+    }
+
+    function toggleMaster(event, id) {
+      event.stopPropagation();
+      if (masteredSet.has(id)) {
+        masteredSet.delete(id);
+      } else {
+        masteredSet.add(id);
+      }
+      saveMastered();
+      applyFilters();
+    }
+
+    function toggleExpandAll() {
+      isAllExpanded = !isAllExpanded;
+      document.getElementById('expandAllBtn').textContent = isAllExpanded ? "收合全部" : "展開全部";
+      document.querySelectorAll('.qa-card').forEach(card => {
+        if (isAllExpanded) {
+          card.classList.add('open');
+        } else {
+          card.classList.remove('open');
+        }
+      });
+    }
+
+    function toggleFilterMastered() {
+      filterOnlyUnmastered = !filterOnlyUnmastered;
+      const btn = document.getElementById('filterMasteredBtn');
+      btn.classList.toggle('active-filter', filterOnlyUnmastered);
+      btn.textContent = filterOnlyUnmastered ? "✓ 僅顯示未掌握" : "⭐ 只看未掌握";
+      applyFilters();
+    }
+
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      currentData = RAW_DATA.filter(item => {
+        if (filterOnlyUnmastered && masteredSet.has(item.id)) {
+          return false;
+        }
+        if (query) {
+          const matchQ = item.question.toLowerCase().includes(query);
+          const matchA = item.answer.toLowerCase().includes(query);
+          return matchQ || matchA;
+        }
+        return true;
+      });
+
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+      updateStats();
+    }
+
+    function shuffleCards() {
+      currentData.sort(() => Math.random() - 0.5);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function resetOrder() {
+      currentData.sort((a, b) => a.id - b.id);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const listBtn = document.getElementById('listViewBtn');
+      const cardBtn = document.getElementById('cardViewBtn');
+      const qaList = document.getElementById('qaList');
+      const flashcardContainer = document.getElementById('flashcardContainer');
+      const expandAllBtn = document.getElementById('expandAllBtn');
+
+      if (mode === 'list') {
+        listBtn.classList.add('active');
+        cardBtn.classList.remove('active');
+        qaList.style.display = 'flex';
+        flashcardContainer.style.display = 'none';
+        expandAllBtn.style.display = 'inline-flex';
+        renderList();
+      } else {
+        cardBtn.classList.add('active');
+        listBtn.classList.remove('active');
+        qaList.style.display = 'none';
+        flashcardContainer.style.display = 'flex';
+        expandAllBtn.style.display = 'none';
+        updateCardView();
+      }
+    }
+
+    /* Flashcard Functions */
+    function flipCard() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.toggle('flipped');
+    }
+
+    function updateCardView() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.remove('flipped');
+
+      if (currentData.length === 0) {
+        document.getElementById('fcQuestion').textContent = '無卡片資料';
+        document.getElementById('fcAnswer').textContent = '無卡片資料';
+        document.getElementById('fcCardNumber').textContent = '0 / 0';
+        document.getElementById('fcCardNumberBack').textContent = '0 / 0';
+        return;
+      }
+
+      if (cardIndex < 0) cardIndex = 0;
+      if (cardIndex >= currentData.length) cardIndex = currentData.length - 1;
+
+      const item = currentData[cardIndex];
+      const isMastered = masteredSet.has(item.id);
+
+      document.getElementById('fcQuestion').textContent = item.question;
+      document.getElementById('fcAnswer').textContent = item.answer;
+
+      const cardNumText = `卡片 ${cardIndex + 1} / ${currentData.length} (#${item.id})`;
+      document.getElementById('fcCardNumber').textContent = cardNumText;
+      document.getElementById('fcCardNumberBack').textContent = cardNumText;
+
+      const btn1 = document.getElementById('fcMasterBtn');
+      const btn2 = document.getElementById('fcMasterBtnBack');
+      btn1.classList.toggle('is-mastered', isMastered);
+      btn2.classList.toggle('is-mastered', isMastered);
+
+      renderMath();
+    }
+
+    function prevCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex - 1 + currentData.length) % currentData.length;
+      updateCardView();
+    }
+
+    function nextCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex + 1) % currentData.length;
+      updateCardView();
+    }
+
+    function toggleCardMaster(event) {
+      event.stopPropagation();
+      if (currentData.length === 0) return;
+      const item = currentData[cardIndex];
+      toggleMaster(event, item.id);
+      updateCardView();
+    }
+
+    /* Keyboard Shortcuts */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (currentMode === 'card') {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          flipCard();
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          prevCard();
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          nextCard();
+        } else if (e.code === 'KeyM') {
+          e.preventDefault();
+          toggleCardMaster(e);
+        }
+      }
+    });
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      updateStats();
+      renderList();
+      setTimeout(renderMath, 200);
+    });
+  </script>
+</body>
+</html>

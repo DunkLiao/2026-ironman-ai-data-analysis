@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day30 - 問答複習卡</title>
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-light: #eff6ff;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --accent: #f59e0b;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
+      --success: #34d399;
+      --success-light: #064e3b33;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* Navigation / Header */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .view-toggles {
+      display: flex;
+      background: var(--bg-color);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .toggle-btn {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--border-color);
+    }
+
+    .btn.active-filter {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 99px;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* List View Cards */
+    .qa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .qa-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .qa-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .qa-card.mastered {
+      border-left: 4px solid var(--success);
+    }
+
+    .qa-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .qa-id {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .qa-question {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      padding-top: 2px;
+    }
+
+    .qa-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .master-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+      transition: transform 0.15s, color 0.15s;
+    }
+
+    .master-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .master-btn.is-mastered {
+      color: var(--accent);
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .qa-card.open .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    .qa-answer {
+      display: none;
+      padding: 16px 20px 18px 60px;
+      background: var(--bg-color);
+      border-top: 1px dashed var(--border-color);
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    .qa-card.open .qa-answer {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Flashcard Mode */
+    .flashcard-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+    }
+
+    .flashcard-wrapper {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 640px;
+      min-height: 340px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .flashcard-wrapper.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-sizing: border-box;
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .card-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .badge-q {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-a {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .card-body {
+      margin: auto 0;
+      padding: 20px 10px;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .card-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .flashcard-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .flashcard-controls .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .shortcuts-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="nav-left">
+        <a href="index.html" class="back-btn" title="回目錄">← 目錄</a>
+        <h1 class="page-title">Day30 問答卡</h1>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+        <div class="view-toggles">
+          <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
+          <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜尋問題或答案關鍵字..." oninput="handleSearch()">
+      </div>
+      <div class="action-buttons">
+        <button class="btn" id="filterMasteredBtn" onclick="toggleFilterMastered()">⭐ 只看未掌握</button>
+        <button class="btn" id="expandAllBtn" onclick="toggleExpandAll()">展開全部</button>
+        <button class="btn" onclick="shuffleCards()">🔀 隨機洗牌</button>
+        <button class="btn" onclick="resetOrder()">🔄 恢復順序</button>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <span id="statsCount">總計 0 題</span>
+      <div class="progress-bar-container">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <span id="statsMastered">掌握率 0%</span>
+    </div>
+
+    <!-- List View -->
+    <div id="qaList" class="qa-list"></div>
+
+    <!-- Flashcard Mode View -->
+    <div id="flashcardContainer" class="flashcard-container">
+      <div class="flashcard-wrapper" id="flashcardWrapper" onclick="flipCard()">
+        <div class="flashcard-inner">
+          <!-- Front Face -->
+          <div class="flashcard-face flashcard-front">
+            <div class="card-top">
+              <span class="card-badge badge-q">問題</span>
+              <span id="fcCardNumber">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtn" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcQuestion">載入中...</div>
+            <div class="card-hint">💡 點擊卡片或按空白鍵翻面看答案</div>
+          </div>
+          <!-- Back Face -->
+          <div class="flashcard-face flashcard-back">
+            <div class="card-top">
+              <span class="card-badge badge-a">解答</span>
+              <span id="fcCardNumberBack">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtnBack" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcAnswer">載入中...</div>
+            <div class="card-hint">💡 再次點擊卡片翻回正面</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn" onclick="prevCard()">← 上一題</button>
+        <button class="btn btn-primary" onclick="flipCard()">翻轉卡片</button>
+        <button class="btn" onclick="nextCard()">下一題 →</button>
+      </div>
+      <div class="shortcuts-hint">鍵盤快速鍵：[←] 上一題 · [空白鍵] 翻面 · [→] 下一題 · [M] 標記掌握</div>
+    </div>
+  </main>
+
+  <script>
+    const THEME_STORAGE_KEY = "qa_theme";
+    const STORAGE_KEY = "anki_mastered_" + "Day30";
+    const RAW_DATA = [{"id":1,"question":"賽門·西奈克（Simon Sinek）提出的「黃金圈法則」（Golden Circle）由內而外包含哪三個層次？","answer":"Why（為什麼）、How（如何做）、What（做什麼）。"},{"id":2,"question":"在黃金圈法則中，「Why」代表的是什麼？","answer":"核心價值、動機、信念或存在的目的。"},{"id":3,"question":"在黃金圈法則中，「How」代表的是什麼？","answer":"實現目標的方法、策略或獨特的流程。"},{"id":4,"question":"在黃金圈法則中，「What」代表的是什麼？","answer":"具體的產品、服務、工作內容或具體成果。"},{"id":5,"question":"大多數人在溝通時是從外向內（What 到 Why），但具影響力的領導者通常採取什麼順序？","answer":"從內向外，即先說「為什麼（Why）」，再說「如何做（How）」與「做什麼（What）」。"},{"id":6,"question":"黃金圈中，「Why」的溝通主要訴求人類的哪種層面以產生共鳴？","answer":"情感與價值觀層面。"},{"id":7,"question":"應用黃金圈於組織變革時，針對「為什麼（Why）」應澄清哪兩種動機？","answer":"追求機會的動機（想去哪裡）與規避風險的動機（想避免什麼）。"},{"id":8,"question":"在變革管理的「How」層面，應確保路徑具備哪兩個特點？","answer":"理性上簡單高效、感性上愉快正向。"},{"id":9,"question":"論文口試（Thesis Defense）簡報的核心目標與論文本身有何不同？","answer":"論文是完整的紀錄，而口試是為了幫助委員會理解、測試並討論研究的核心貢獻。"},{"id":10,"question":"在製作口試簡報前，應該先完成哪一種「決策規則」句子？","answer":"定義貢獻的「一句話」：本研究顯示 [主要發現]，使用 [方法]，改變了我們對 [大問題] 的理解。"},{"id":11,"question":"論文口試的四部分敘事結構分別為何？","answer":"Why (問題)、How (方法)、What (發現)、So what (貢獻與影響)。"},{"id":12,"question":"口試簡報中，第一張投影片（標題頁）除了論文題目外，還應包含什麼？","answer":"一個能傳達研究貢獻的白話副標題。"},{"id":13,"question":"關於口試中的「文獻回顧」，應將其呈現為「差距（Gap）」而非什麼？","answer":"參考書目清單（Bibliography）。"},{"id":14,"question":"如何將文獻回顧轉化為有力的論點？","answer":"組織既有工作中的矛盾或尚未被測試的部分，引出本研究的問題。"},{"id":15,"question":"口試中的「研究方法」投影片應扮演什麼角色？","answer":"建立信任的鏈結（Chain of trust），證明研究設計足以產生可靠結果。"},{"id":16,"question":"在呈現研究結果（Results）的投影片時，標題應如何撰寫？","answer":"標題應是一個基於證據的聲明或發現（Claim），而非標籤式的標題（如「結果」）。"},{"id":17,"question":"在口試簡報中，「研究限制（Limitations）」投影片的積極意義為何？","answer":"展現對證據支持範圍的精準理解，而非削弱研究價值。"},{"id":18,"question":"優秀的「研究限制」說明應包含哪三個部分？","answer":"限制（邊界因素）、後果（受影響的詮釋）、回應（如何減低風險或未來計畫）。"},{"id":19,"question":"口試最後的「總結（Conclusion）」應區分哪三個層次？","answer":"發現（Evidence）、貢獻（Contribution）、影響（Implication）。"},{"id":20,"question":"口試應對 Q&A 的「附錄投影片」建議分為哪六類？","answer":"假設、方法細節、證據、限制、替代方案、影響。"},{"id":21,"question":"論文口試排練的三個層次為何？","answer":"故事排練（僅用標題）、計時排練（模擬條件）、挑戰排練（同儕提問）。"},{"id":22,"question":"什麼是「數據溝通（Data Communication）」？","answer":"將手中的數據整理分析，用最直白的敘事方式讓溝通對象聽懂、看懂並給予反饋。"},{"id":23,"question":"數據溝通中，除了描述性分析，哪一種分析對於「人人必備」的技能至關重要？","answer":"診斷性分析。"},{"id":24,"question":"資訊技術團隊（IT/Data Scientists）在數據方面的核心技能為何？","answer":"發明 AI/Martech 工具、數據清洗、統計分析、機器學習建模。"},{"id":25,"question":"行銷團隊在數據溝通中的角色是什麼？","answer":"將數據與消費者行為連接，轉譯因果關係並制定可執行的策略。"},{"id":26,"question":"業務團隊在數據方面的關鍵能力是什麼？","answer":"將數據科學的好處與風險轉化為語言傳遞給外行人，並蒐集市場回饋。"},{"id":27,"question":"行政管理部門如何運用數據技能？","answer":"呈現系統化的數據報告、確保數據隱私與法律合規性。"},{"id":28,"question":"如何降低組織內不同職能（如工程師與業務）間的數據認知差距？","answer":"普及數據溝通、互相分享邏輯、將專業術語轉化為「白話文」。"},{"id":29,"question":"企業如何確保內部數據溝通順暢？","answer":"建立內訓交流機制、建立企業數據字庫與找查系統。"},{"id":30,"question":"愛因斯坦曾說：「如果你不能_____，那你就不夠理解它。」","answer":"簡單地解釋一個事物"},{"id":31,"question":"內部控制（Internal Control）的三个主要目標為何？","answer":"提升營運效能、確保財務報導可靠性、保障資產安全及相關法令遵循。"},{"id":32,"question":"COSO 內部控制整體架構中的五大要素為何？","answer":"控制環境、風險評估、控制活動、資訊與溝通、監督。"},{"id":33,"question":"在 COSO 架構中，「控制環境」需考慮哪些因素？","answer":"管理文化、操守道德、董事會監督、組織架構及人力資源政策。"},{"id":34,"question":"學校法人內部控制中的「財務事項」包含哪些重點？","answer":"資產購置、處分、投資事項、募款及借款決策等。"},{"id":35,"question":"學校內部控制中，關於「關係人交易」的定義對象包括哪些？","answer":"董事、監察人、校長及其二親等內親屬，或相關法人。"},{"id":36,"question":"內部稽核報告（Internal Audit Report）的主要目的為何？","answer":"檢核內控制度有效程度，衡量營運效率，提供改進建議以確保永續經營。"},{"id":37,"question":"根據內控實施辦法，稽核人員發現的缺失應如何處理？","answer":"於年度稽核報告中據實揭露，檢附工作底稿，並定期追蹤至改善為止。"},{"id":38,"question":"學校稽核報告應送交誰核閱？","answer":"校長（副本交付監察人查閱）。"},{"id":39,"question":"學校法人稽核報告應送交誰？","answer":"董事會會議（副本交付監察人查閱）。"},{"id":40,"question":"內部稽核報告及其相關工作底稿應至少保存幾年？","answer":"五年。"},{"id":41,"question":"撰寫內部稽核報告應具備哪三項核心觀念？","answer":"獨立性、專業性、客觀性。"},{"id":42,"question":"內部稽核流程中，哪一個會議用於讓受稽核單位答覆疑問並確認結果？","answer":"結案會議。"},{"id":43,"question":"內部稽核十大步驟的最後一步是什麼？","answer":"改善狀況追蹤。"},{"id":44,"question":"在稽核有價證券投資時，需檢查是否符合哪些標準？","answer":"投資額度上限、董事會通過、報主管機關同意及風險評估資料。"},{"id":45,"question":"Apple 的黃金圈：其「Why」層次的核心理念為何？","answer":"挑戰現狀，打破傳統，讓科技更簡單易用。"},{"id":46,"question":"若要建立個人品牌，黃金圈中的「How」應該描述什麼？","answer":"個人獨到的做法、方法或與眾不同的策略。"},{"id":47,"question":"在數據識讀中，「描述性分析」的主要任務為何？","answer":"辨識出一段時間內蒐集的數據結果及其代表的意義。"},{"id":48,"question":"論文口試投影片的建議總數（20分鐘報告）大約為多少張？","answer":"12 至 18 張核心投影片。"},{"id":49,"question":"在論文口試中，如果遇到不知道答案的問題應如何處理？","answer":"區分「現有研究支持的部分」與「需要新分析的部分」，展現專業邊界。"},{"id":50,"question":"內部稽核的「專業性」要求稽核人員應熟知什麼？","answer":"主管機關規定、學校內控制度、各作業規章及稽核技巧。"},{"id":51,"question":"論文口試故事圖中的「How」階段主要包含簡報中的第幾張投影片？","answer":"第 5 張（研究設計）與第 6 張（研究方法）。"},{"id":52,"question":"數據溝通的普及是為了降低企業內部的什麼？","answer":"認知差距。"},{"id":53,"question":"內部控制體系中最常被參考的文獻架構為何？","answer":"COSO 報告（內部控制整體架構）。"},{"id":54,"question":"學校內控循環中的「營運事項」包括哪些領域？","answer":"教學、學生、總務、研發、產學合作、國際交流及資訊處理。"},{"id":55,"question":"內部稽核報告中的「缺失揭露」除了內控缺失外，還應包含哪些？","answer":"政府檢查缺失、會計師查核缺失或其他缺失事項。"},{"id":56,"question":"黃金圈法則之所以有效，是因為它遵循了人類大腦的何種運作方式？","answer":"從決定情感的邊緣系統（Why）到處理邏輯的新皮質（What）。"},{"id":57,"question":"在「黃金圈」架構下，人們買的不是你做了什麼（What），而是_____。","answer":"你為什麼做（Why）。"},{"id":58,"question":"論文口試中的「合成（Synthesis）」投影片（第 10 張）其作用為何？","answer":"連結各項發現，回答研究問題並展示整體圖像。"},{"id":59,"question":"論文口試中，呈現圖表時應遵守 NASA 的何種建議？","answer":"將結果與其意義整合，直接標註相關比較，而非僅說「如圖所示」。"},{"id":60,"question":"數據溝通中，「視覺化整理」對行銷團隊的主要作用為何？","answer":"讓領域以外的人（如客戶或高層）也能輕鬆理解統計結果。"},{"id":61,"question":"內部稽核十大步驟中，第一步是什麼？","answer":"稽核對象會議，指派稽核人員處理專案。"},{"id":62,"question":"若監察人發現學校有重大違規，應在接獲報告後幾日內函報主管機關？","answer":"十日內。"},{"id":63,"question":"內部控制的「監督」要素包含對財務報表內控的定期評估與什麼？","answer":"建立內部審計職能實施監控。"},{"id":64,"question":"對於學校法人，「預算與決算之審議」屬於哪一個內控事項？","answer":"董事會及監察人運作事項。"},{"id":65,"question":"在變革溝通中，為何情感上的 Why 比理性上的 Why 更重要？","answer":"因為情感目的能產生真正的動力與參與感。"},{"id":66,"question":"論文口試中，「So What」投影片位於 12 張結構中的哪兩張？","answer":"第 11 張（研究限制）與第 12 張（貢獻與影響）。"},{"id":67,"question":"AI 工具在數據溝通中的角色，主要是為了活化什麼？","answer":"品牌的營運策略與數位績效運營。"},{"id":68,"question":"内部控制中「資訊與溝通」要素的重點為何？","answer":"確保會報路線清晰、報告完整及時，並傳遞內控責任。"},{"id":69,"question":"在個人品牌練習中，詢問「你想解決的問題是什麼」是在定義哪一個圓圈？","answer":"為什麼（Why）。"},{"id":70,"question":"論文口試開場時，應如何確保聽眾都能理解？","answer":"從最廣泛的共同基礎開始，逐步移動到專業的研究差距。"},{"id":71,"question":"數據分析技能中的「數據清洗（Data Cleaning）」通常屬於哪個團隊的範疇？","answer":"資訊技術團隊。"},{"id":72,"question":"在學校內控中，「獎補助款之收支管理」屬於哪一個循環？","answer":"學校財務事項。"},{"id":73,"question":"稽核報告的格式中，「改進事項」應緊接著什麼內容？","answer":"查核發現或異常說明。"},{"id":74,"question":"論文口試中，「研究設計」投影片（第 5 張）最理想的呈現方式為何？","answer":"連結研究各階段、資料或變數的邏輯架構圖。"},{"id":75,"question":"企業內部的「數據相關字庫」目的是為了避免什麼？","answer":"問不同人得到不一致的答案，確保目標一致。"},{"id":76,"question":"「風險評估」作為內控要素，在學校層級需建立什麼機制？","answer":"與營運、人事、財務相關的風險評估流程及反舞弊內控。"},{"id":77,"question":"在黃金圈應用中，澄清「為什麼現在行動很重要」屬於哪部分的提問？","answer":"為什麼（Why）。"},{"id":78,"question":"論文口試的「挑戰排練（Challenge Rehearsal）」主要目的為何？","answer":"讓同儕針對假設與方法提出困難問題，測試論點強度。"},{"id":79,"question":"内部稽核報告的「客觀性」具體表現為何？","answer":"中立、公正、不偏不倚地敘述發現與異常。"},{"id":80,"question":"在數據素養中，業務團隊需要懂的數據語言比 IT 團隊更_____（廣/深）。","answer":"廣。"}];
+    let currentData = [...RAW_DATA];
+    let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+    let currentMode = 'list';
+    let filterOnlyUnmastered = false;
+    let isAllExpanded = false;
+    let cardIndex = 0;
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
+
+    function saveMastered() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(masteredSet)));
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = RAW_DATA.length;
+      const masteredCount = RAW_DATA.filter(item => masteredSet.has(item.id)).length;
+      const pct = total === 0 ? 0 : Math.round((masteredCount / total) * 100);
+
+      document.getElementById('statsCount').textContent = `顯示 ${currentData.length} / 共 ${total} 題`;
+      document.getElementById('statsMastered').textContent = `已掌握 ${masteredCount} 題 (${pct}%)`;
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    function renderMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function renderList() {
+      const container = document.getElementById('qaList');
+      if (currentData.length === 0) {
+        container.innerHTML = '<div class="empty-state">沒有符合條件的問答卡片</div>';
+        return;
+      }
+
+      container.innerHTML = currentData.map(item => {
+        const isMastered = masteredSet.has(item.id);
+        return `
+          <div class="qa-card ${isMastered ? 'mastered' : ''} ${isAllExpanded ? 'open' : ''}" id="card-${item.id}">
+            <div class="qa-header" onclick="toggleItem(${item.id})">
+              <span class="qa-id">#${item.id}</span>
+              <span class="qa-question">${escapeHtml(item.question)}</span>
+              <div class="qa-actions">
+                <button class="master-btn ${isMastered ? 'is-mastered' : ''}"
+                        onclick="toggleMaster(event, ${item.id})"
+                        title="${isMastered ? '已掌握' : '標記掌握'}">★</button>
+                <span class="expand-icon">▼</span>
+              </div>
+            </div>
+            <div class="qa-answer">${escapeHtml(item.answer)}</div>
+          </div>
+        `;
+      }).join('');
+
+      renderMath();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function toggleItem(id) {
+      const el = document.getElementById('card-' + id);
+      if (el) {
+        el.classList.toggle('open');
+      }
+    }
+
+    function toggleMaster(event, id) {
+      event.stopPropagation();
+      if (masteredSet.has(id)) {
+        masteredSet.delete(id);
+      } else {
+        masteredSet.add(id);
+      }
+      saveMastered();
+      applyFilters();
+    }
+
+    function toggleExpandAll() {
+      isAllExpanded = !isAllExpanded;
+      document.getElementById('expandAllBtn').textContent = isAllExpanded ? "收合全部" : "展開全部";
+      document.querySelectorAll('.qa-card').forEach(card => {
+        if (isAllExpanded) {
+          card.classList.add('open');
+        } else {
+          card.classList.remove('open');
+        }
+      });
+    }
+
+    function toggleFilterMastered() {
+      filterOnlyUnmastered = !filterOnlyUnmastered;
+      const btn = document.getElementById('filterMasteredBtn');
+      btn.classList.toggle('active-filter', filterOnlyUnmastered);
+      btn.textContent = filterOnlyUnmastered ? "✓ 僅顯示未掌握" : "⭐ 只看未掌握";
+      applyFilters();
+    }
+
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      currentData = RAW_DATA.filter(item => {
+        if (filterOnlyUnmastered && masteredSet.has(item.id)) {
+          return false;
+        }
+        if (query) {
+          const matchQ = item.question.toLowerCase().includes(query);
+          const matchA = item.answer.toLowerCase().includes(query);
+          return matchQ || matchA;
+        }
+        return true;
+      });
+
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+      updateStats();
+    }
+
+    function shuffleCards() {
+      currentData.sort(() => Math.random() - 0.5);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function resetOrder() {
+      currentData.sort((a, b) => a.id - b.id);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const listBtn = document.getElementById('listViewBtn');
+      const cardBtn = document.getElementById('cardViewBtn');
+      const qaList = document.getElementById('qaList');
+      const flashcardContainer = document.getElementById('flashcardContainer');
+      const expandAllBtn = document.getElementById('expandAllBtn');
+
+      if (mode === 'list') {
+        listBtn.classList.add('active');
+        cardBtn.classList.remove('active');
+        qaList.style.display = 'flex';
+        flashcardContainer.style.display = 'none';
+        expandAllBtn.style.display = 'inline-flex';
+        renderList();
+      } else {
+        cardBtn.classList.add('active');
+        listBtn.classList.remove('active');
+        qaList.style.display = 'none';
+        flashcardContainer.style.display = 'flex';
+        expandAllBtn.style.display = 'none';
+        updateCardView();
+      }
+    }
+
+    /* Flashcard Functions */
+    function flipCard() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.toggle('flipped');
+    }
+
+    function updateCardView() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.remove('flipped');
+
+      if (currentData.length === 0) {
+        document.getElementById('fcQuestion').textContent = '無卡片資料';
+        document.getElementById('fcAnswer').textContent = '無卡片資料';
+        document.getElementById('fcCardNumber').textContent = '0 / 0';
+        document.getElementById('fcCardNumberBack').textContent = '0 / 0';
+        return;
+      }
+
+      if (cardIndex < 0) cardIndex = 0;
+      if (cardIndex >= currentData.length) cardIndex = currentData.length - 1;
+
+      const item = currentData[cardIndex];
+      const isMastered = masteredSet.has(item.id);
+
+      document.getElementById('fcQuestion').textContent = item.question;
+      document.getElementById('fcAnswer').textContent = item.answer;
+
+      const cardNumText = `卡片 ${cardIndex + 1} / ${currentData.length} (#${item.id})`;
+      document.getElementById('fcCardNumber').textContent = cardNumText;
+      document.getElementById('fcCardNumberBack').textContent = cardNumText;
+
+      const btn1 = document.getElementById('fcMasterBtn');
+      const btn2 = document.getElementById('fcMasterBtnBack');
+      btn1.classList.toggle('is-mastered', isMastered);
+      btn2.classList.toggle('is-mastered', isMastered);
+
+      renderMath();
+    }
+
+    function prevCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex - 1 + currentData.length) % currentData.length;
+      updateCardView();
+    }
+
+    function nextCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex + 1) % currentData.length;
+      updateCardView();
+    }
+
+    function toggleCardMaster(event) {
+      event.stopPropagation();
+      if (currentData.length === 0) return;
+      const item = currentData[cardIndex];
+      toggleMaster(event, item.id);
+      updateCardView();
+    }
+
+    /* Keyboard Shortcuts */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (currentMode === 'card') {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          flipCard();
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          prevCard();
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          nextCard();
+        } else if (e.code === 'KeyM') {
+          e.preventDefault();
+          toggleCardMaster(e);
+        }
+      }
+    });
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      updateStats();
+      renderList();
+      setTimeout(renderMath, 200);
+    });
+  </script>
+</body>
+</html>

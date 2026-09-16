@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day20 - 問答複習卡</title>
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-light: #eff6ff;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --accent: #f59e0b;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
+      --success: #34d399;
+      --success-light: #064e3b33;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* Navigation / Header */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .view-toggles {
+      display: flex;
+      background: var(--bg-color);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .toggle-btn {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--border-color);
+    }
+
+    .btn.active-filter {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 99px;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* List View Cards */
+    .qa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .qa-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .qa-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .qa-card.mastered {
+      border-left: 4px solid var(--success);
+    }
+
+    .qa-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .qa-id {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .qa-question {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      padding-top: 2px;
+    }
+
+    .qa-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .master-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+      transition: transform 0.15s, color 0.15s;
+    }
+
+    .master-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .master-btn.is-mastered {
+      color: var(--accent);
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .qa-card.open .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    .qa-answer {
+      display: none;
+      padding: 16px 20px 18px 60px;
+      background: var(--bg-color);
+      border-top: 1px dashed var(--border-color);
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    .qa-card.open .qa-answer {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Flashcard Mode */
+    .flashcard-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+    }
+
+    .flashcard-wrapper {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 640px;
+      min-height: 340px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .flashcard-wrapper.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-sizing: border-box;
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .card-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .badge-q {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-a {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .card-body {
+      margin: auto 0;
+      padding: 20px 10px;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .card-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .flashcard-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .flashcard-controls .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .shortcuts-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="nav-left">
+        <a href="index.html" class="back-btn" title="回目錄">← 目錄</a>
+        <h1 class="page-title">Day20 問答卡</h1>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+        <div class="view-toggles">
+          <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
+          <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜尋問題或答案關鍵字..." oninput="handleSearch()">
+      </div>
+      <div class="action-buttons">
+        <button class="btn" id="filterMasteredBtn" onclick="toggleFilterMastered()">⭐ 只看未掌握</button>
+        <button class="btn" id="expandAllBtn" onclick="toggleExpandAll()">展開全部</button>
+        <button class="btn" onclick="shuffleCards()">🔀 隨機洗牌</button>
+        <button class="btn" onclick="resetOrder()">🔄 恢復順序</button>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <span id="statsCount">總計 0 題</span>
+      <div class="progress-bar-container">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <span id="statsMastered">掌握率 0%</span>
+    </div>
+
+    <!-- List View -->
+    <div id="qaList" class="qa-list"></div>
+
+    <!-- Flashcard Mode View -->
+    <div id="flashcardContainer" class="flashcard-container">
+      <div class="flashcard-wrapper" id="flashcardWrapper" onclick="flipCard()">
+        <div class="flashcard-inner">
+          <!-- Front Face -->
+          <div class="flashcard-face flashcard-front">
+            <div class="card-top">
+              <span class="card-badge badge-q">問題</span>
+              <span id="fcCardNumber">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtn" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcQuestion">載入中...</div>
+            <div class="card-hint">💡 點擊卡片或按空白鍵翻面看答案</div>
+          </div>
+          <!-- Back Face -->
+          <div class="flashcard-face flashcard-back">
+            <div class="card-top">
+              <span class="card-badge badge-a">解答</span>
+              <span id="fcCardNumberBack">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtnBack" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcAnswer">載入中...</div>
+            <div class="card-hint">💡 再次點擊卡片翻回正面</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn" onclick="prevCard()">← 上一題</button>
+        <button class="btn btn-primary" onclick="flipCard()">翻轉卡片</button>
+        <button class="btn" onclick="nextCard()">下一題 →</button>
+      </div>
+      <div class="shortcuts-hint">鍵盤快速鍵：[←] 上一題 · [空白鍵] 翻面 · [→] 下一題 · [M] 標記掌握</div>
+    </div>
+  </main>
+
+  <script>
+    const THEME_STORAGE_KEY = "qa_theme";
+    const STORAGE_KEY = "anki_mastered_" + "Day20";
+    const RAW_DATA = [{"id":1,"question":"在基於 UiPath 的付款對帳研究中，`generate_ar.py` 腳本的主要功能是什麼？","answer":"建立包含 1,000 名客戶的合成 ERP 匯出資料，其中包括發票、付款、信用和調整記錄。"},{"id":2,"question":"在合成的 Accounts Receivable 資料集中，大約有多少比例的行被刻意設置為「損壞」以供系統檢測？","answer":"10% 至 12%。"},{"id":3,"question":"請寫出 `reconcile.py` 用於重新計算客戶餘額的公式。","answer":"$Balance = ((Invoice.total - Invoice.applied) \\cdot exchange\\_rate) - ((Payment.total - Payment.applied) \\cdot exchange\\_rate) - ((Credit.total - Credit.applied) \\cdot exchange\\_rate) + ((Adjustment.total - Adjustment.applied) \\cdot exchange\\_rate)$"},{"id":4,"question":"在對帳自動化項目中，`anomalies.py` 腳本使用哪種機器學習模型來預測餘額並識別異常？","answer":"線性迴歸 (Linear Regression)。"},{"id":5,"question":"UiPath 工作流分析器 (Workflow Analyzer) 的「文件發現」步驟具體做什麼？","answer":"遞迴搜尋專案目錄中所有的 .xaml 文件，同時忽略臨時和版本控制目錄。"},{"id":6,"question":"UiPath 工作流分析器如何構建「依賴圖」？","answer":"建立一個有向圖，將每個工作流與其調用的子工作流集合關聯起來。"},{"id":7,"question":"在 UiRPA 實施後，發票處理時間從每張 7 分鐘減少到了多少？","answer":"1.5 分鐘 (減少了 78.57%)。"},{"id":8,"question":"實施 UiRPA 後，訂單輸入準備時間的改善百分比是多少？","answer":"65%。"},{"id":9,"question":"根據研究結果，自動化後的庫存付款對帳週期從 6 天縮短到了幾天？","answer":"2 天。"},{"id":10,"question":"UiRPA 實施後，發票匹配錯誤率從 15% 顯著降低到了多少？","answer":"1.50% (降低了 90%)。"},{"id":11,"question":"自動化對帳系統預期可節省多少比例的營運成本？","answer":"20% 至 25%。"},{"id":12,"question":"什麼是「自動化銀行對帳」？","answer":"使用軟體自動匹配銀行對帳單與總帳交易，標記未匹配項並生成審計報告，無需手動逐行比對。"},{"id":13,"question":"在 Python 對帳腳本中，為什麼在進行精確匹配前需要對資料進行「標準化」？","answer":"為了統一格式（如轉為小寫、移除空格），確保不同來源的欄位名稱能正確對齊。"},{"id":14,"question":"Python 自動化對帳的第二步通常是什麼？","answer":"根據「金額」和「日期」進行精確匹配 (Exact Match)。"},{"id":15,"question":"在銀行對帳中，為什麼需要使用「模糊匹配」邏輯？","answer":"為了處理結算延遲（Timing differences），例如月底的入帳可能在次月初才出現在對帳單。"},{"id":16,"question":"Python `fuzzy_match` 函數中常用的兩個容差參數是什麼？","answer":"日期容差 (date_tol) 和金額容差 (amt_tol)。"},{"id":17,"question":"對於使用 Microsoft 365 的團隊，如何定期調度 Python 對帳腳本並通知異常？","answer":"透過 Power Automate 雲端流觸發 Azure Function 執行腳本，並將異常發送到 Teams 頻道。"},{"id":18,"question":"開發一個基本的 Python 銀行對帳腳本通常需要多少天？","answer":"2 至 3 天。"},{"id":19,"question":"Quadratic 銀行對帳模板中，預設的「日期容差窗口」是多少？","answer":"$\\pm 1$ 天。"},{"id":20,"question":"Quadratic 模板中的「描述匹配閾值」預設設定為多少百分比？","answer":"50%。"},{"id":21,"question":"在 Quadratic 儀表板中，「未匹配項帳齡分析 (Unmatched By Age)」圖表的作用是什麼？","answer":"針對仍未對帳的交易進行帳齡分析，協助用戶優先處理較舊的項目。"},{"id":22,"question":"實體匹配 (Entity Matching) 在應收帳款結算中的主要目標是什麼？","answer":"將銀行轉帳資料（通常是非結構化文字）與正確的組織成員或債務人匹配。"},{"id":23,"question":"在非政府組織 (NGO) 的自動對帳案例中，銀行轉帳資料中僅有多少比例包含正確的 ID？","answer":"約 65%。"},{"id":24,"question":"實體匹配中「得分後處理 (Score post-processing)」的基本思想是什麼？","answer":"將特定交易的所有候選匹配得分重新縮放，使其總和為 1，以觀察「相對」得分差距。"},{"id":25,"question":"串聯模型 (Chain classifier) 在實體匹配中的迭代次數上限通常是多少？","answer":"3 次迭代。"},{"id":26,"question":"在波蘭語環境下的實體匹配，如何處理姓名和姓氏的語法變化？","answer":"檢查姓名和姓氏的所有語法形式 (Declination)，並使用 Levenshtein 距離進行軟匹配。"},{"id":27,"question":"根據研究，實體匹配方法將精確率 99% 時的召回率 (Recall) 從 78% 提升到了多少？","answer":"90% 以上。"},{"id":28,"question":"哪三種核心條件使一項任務非常適合自動化？","answer":"1. 格式固定、2. 規則明確、3. 每月重複。"},{"id":29,"question":"在使用 AI 輔助撰寫 PowerPoint VBA 時，為什麼建議上傳簡報截圖？","answer":"讓 AI 了解標題是文字方塊、圖形群組還是母片內容，以寫出精準的程式碼。"},{"id":30,"question":"若要保存包含 VBA 聚集的 PowerPoint 檔案，必須選擇哪種副檔名？","answer":".pptm。"},{"id":31,"question":"在合併 Excel 檔案時，`Worksheet.Copy` 與 `UsedRange.Copy` 有何主要區別？","answer":"`Worksheet.Copy` 複製整張工作表物件（保留名稱與格式），而 `UsedRange.Copy` 僅複製資料區塊。"},{"id":32,"question":"在 VBA 中，`ThisWorkbook.Path` 屬性的作用是什麼？","answer":"動態取得目前活頁簿所在的資料夾位置。"},{"id":33,"question":"VBA 中的 `Dir` 函數在對帳流程中主要用於什麼目的？","answer":"在執行後續動作前，檢查來源檔案是否存在（防呆機制）。"},{"id":34,"question":"在 VBA 中使用 `SaveChanges:=False` 關閉來源檔案的目的是什麼？","answer":"關閉檔案且不儲存任何變更，確保原始檔案不被干擾或覆蓋。"},{"id":35,"question":"若要保存包含 VBA 聚集的 Excel 檔案，必須選擇哪種副檔名？","answer":".xlsm。"},{"id":36,"question":"RowSpeak 等 AI 工具與傳統 Excel 工作流程相比，對帳時間有何差異？","answer":"傳統 Excel 需 1-3 小時，RowSpeak 僅需 1-2 分鐘。"},{"id":37,"question":"根據恆遠數位科技，2026 年「發票辨識 OCR」場景的技術成熟度為何？","answer":"極高。"},{"id":38,"question":"在財務自動化中，「財報分析與異常偵測」場景的導入難度被評為？","answer":"中高。"},{"id":39,"question":"Gartner 預測到 2029 年，策略性部署 AI 的 CFO 將為公司增加多少利潤成長？","answer":"10 個百分點。"},{"id":40,"question":"與舊系統相比，2026 年結合 LLM 的 OCR 系統在辨識品名時有何進步？","answer":"能理解上下文，不再死板地照欄位讀取（例如能區分型號與數量）。"},{"id":41,"question":"判斷類工作（如預測、分析、決策）與流程自動化相比，哪一類的 AI 效益更高？","answer":"判斷類工作的 AI 效益遠高於單純的流程自動化。"},{"id":42,"question":"在對帳流程中，標準化發票編號通常包括哪些操作？","answer":"移除額外空格、更換大小寫、移除特殊字元以及修正無效的分隔符號。"},{"id":43,"question":"UiPath 的「智慧文件處理 (IDP)」層通常結合了哪些技術？","answer":"OCR、機器學習 (ML)、自然語言處理 (NLP) 和 RPA。"},{"id":44,"question":"在 UiPath 專案中，Orchestrator 佇列 (Queues) 用於什麼？","answer":"任務分配、狀態追蹤及實現工作負載的水平擴展。"},{"id":45,"question":"自動化對帳系統中的「商業異常」與「系統異常」有何不同？","answer":"商業異常源於資料邏輯（如金額不符），系統異常源於技術問題（如伺服器超時）。"},{"id":46,"question":"為什麼在大型財務自動化專案中推薦使用 REFramework？","answer":"因為它提供了標準化的錯誤處理、重試機制和狀態管理架構。"},{"id":47,"question":"在 Python `pandas` 中，`str.strip().str.lower().str.replace(\" \", \"_\")` 的目的是什麼？","answer":"清洗欄位名稱，移除首尾空格、轉小寫並將空格替換為底線以便於操作。"},{"id":48,"question":"Python 對帳報告中，通常會使用哪種庫來設定 Excel 儲存格的顏色（如標記異常為紅色）？","answer":"`openpyxl` (使用 `PatternFill`)。"},{"id":49,"question":"Quadratic 模板如何計算「匹配信心分數」？","answer":"根據記錄與配置參數（描述相似度、日期接近度、金額差異）的貼合程度進行評分。"},{"id":50,"question":"實體匹配中的「級聯模型 (Cascade model)」第一階段輸出是什麼？","answer":"初步的匹配得分向量和排名第一的候選匹配項。"},{"id":51,"question":"在應收帳款自動結算中，「精確率 (Precision) >= 99%」的重要性為何？","answer":"修正錯誤匹配所需的成本遠高於手動處理缺失匹配，因此必須確保極高的準確度。"},{"id":52,"question":"為什麼自動化系統需要對「匯率」和「四捨五入誤差」設置容差規則？","answer":"為了避免因微小的匯算差異或數值截斷導致對帳失敗。"},{"id":53,"question":"在 PPT VBA 自動化中，如何處理從 12 月到下一年 1 月的過渡？","answer":"在程式碼中編寫年度進位邏輯，確保 12 月後更新為次年 1 月，而非「13 月」。"},{"id":54,"question":"根據中小企業老闆的經驗，會計部門約有多少比例的工作是「純粹的搬運工作」？","answer":"約 60%。"},{"id":55,"question":"會計部門導入 AI 的一個關鍵跡象是：當老闆詢問利潤時需等待多久？","answer":"若需等待 3 天以上才有答案，即為導入時機。"},{"id":56,"question":"在「發票辨識」SOP 中，AI 能夠辨識台灣的哪些憑證類型？","answer":"三聯式、二聯式、收銀機發票、電子發票，甚至手寫補開憑證。"},{"id":57,"question":"自動化對帳中使用的「重複行檢索欄位」通常包括哪些？","answer":"發票編號、付款金額、付款日期、銀行參考號和付款人標識符。"},{"id":58,"question":"在 `Algorithm 1` 中，OCR 引擎提取的文本 $T$ 會發送給什麼來生成結構化 JSON？","answer":"大型語言模型 (LLM) $L$。"},{"id":59,"question":"UiPath 工作流分析器的「執行順序確定」步驟使用哪種演算法遍歷依賴圖？","answer":"深度優先搜尋 (DFS)。"},{"id":60,"question":"實體匹配研究中使用的「XGBoost」模型在處理類別失衡時有何優勢？","answer":"它是一個強大的整合模型，只需調整偏置或截止值即可處理正負樣本比例失調。"},{"id":61,"question":"什麼是「DSO (Days Sales Outstanding)」指標？","answer":"應收帳款週轉天數，即從銷售完成到收回款項所需的平均天數。"},{"id":62,"question":"在 VBA 合併檔案流程中，「人工驗證」應檢查哪些重點？","answer":"檢查工作表是否新增、月份欄位是否正確、抽查總比數以及比對內容一致性。"},{"id":63,"question":"對於每月處理超過多少張發票的 1-5 人會計部門，2026 年是導入 AI 的好時機？","answer":"每月超過 200 張發票。"},{"id":64,"question":"「記帳分錄自動化」場景預計每月可節省多少工時？","answer":"20 至 40 小時。"},{"id":65,"question":"在 UiPath 工作流分析中，如何區分不同的工作流角色？","answer":"若專案被識別為 REFramework 實施，分析器會根據框架角色對工作流進行分類。"},{"id":66,"question":"Python 對帳腳本在進行模糊匹配時，若找到多個候選匹配項會如何處理？","answer":"範例程式碼中通常設定為「僅當候選項只有一個時」才執行自動匹配，以確保準確。"},{"id":67,"question":"RowSpeak 工具如何處理缺失交易（Missing transactions）？","answer":"自動標記並生成建議，例如「交易 ID 在系統 A 存在但在系統 B 缺失」。"},{"id":68,"question":"「實體去重 (Entity deduplication)」是實體匹配技術的另一種應用場景嗎？","answer":"是的。"},{"id":69,"question":"在 VBA 中，若要在同一活頁簿中新增多個名稱相同的工作表，Excel 會如何處理？","answer":"會自動重新命名（例如加上編號 2），以防止名稱衝突。"},{"id":70,"question":"什麼是「Cash Application」自動化？","answer":"將收到的付款自動匹配到未清償發票，並在 ERP 系統中進行結算的過程。"},{"id":71,"question":"自動化對帳中的「通融限額 (Tolerance limits)」通常應用於什麼情況？","answer":"處理因四捨五入或微小差額導致的金額不一致。"},{"id":72,"question":"在 UiPath 專案中，「資產 (Assets)」主要用於存儲什麼？","answer":"環境特定的配置、憑據或其他共享變量。"},{"id":73,"question":"機器學習異常檢測在對帳中的作用是什麼？","answer":"發現隱含的整合錯誤，即使資料通過了基於規則的檢查，仍能識別出不符合整體模式的記錄。"},{"id":74,"question":"為什麼自動化對帳系統需要生成「審計追蹤 (Audit trail)」？","answer":"為了符合財務合規要求，確保每個對帳決定和異常處理都有完整的記錄可查。"},{"id":75,"question":"在 VBA 中執行聚集後，為什麼建議彈出訊息框 (MsgBox)？","answer":"向使用者確認程式已執行完畢，並提供成功或失敗的即時回饋。"},{"id":76,"question":"Python 對帳自動化的成本結構通常包括哪些部分？","answer":"通常包括開發與測試（2-5天）以及後續的雲端執行或託管費用。"},{"id":77,"question":"在 entity matching 中，什麼是「特徵向量 (Features vector)」？","answer":"由兩個記錄屬性之間的相似度計算出的數值集合（如姓名、地址是否匹配）。"},{"id":78,"question":"根據 2026 年的報告，多少比例的企業表示財務 AI 的投資回報率 (ROI) 達到或超過預期？","answer":"71%。"},{"id":79,"question":"UiPath 研究顯示，自動化能減少多少比例的發票匹配錯誤？","answer":"90%。"},{"id":80,"question":"「吞吐量 (Throughput)」在對帳系統性能評估中代表什麼？","answer":"系統在單位時間內能處理的紀錄或動作總量（例如 40,000 筆）。"}];
+    let currentData = [...RAW_DATA];
+    let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+    let currentMode = 'list';
+    let filterOnlyUnmastered = false;
+    let isAllExpanded = false;
+    let cardIndex = 0;
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
+
+    function saveMastered() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(masteredSet)));
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = RAW_DATA.length;
+      const masteredCount = RAW_DATA.filter(item => masteredSet.has(item.id)).length;
+      const pct = total === 0 ? 0 : Math.round((masteredCount / total) * 100);
+
+      document.getElementById('statsCount').textContent = `顯示 ${currentData.length} / 共 ${total} 題`;
+      document.getElementById('statsMastered').textContent = `已掌握 ${masteredCount} 題 (${pct}%)`;
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    function renderMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function renderList() {
+      const container = document.getElementById('qaList');
+      if (currentData.length === 0) {
+        container.innerHTML = '<div class="empty-state">沒有符合條件的問答卡片</div>';
+        return;
+      }
+
+      container.innerHTML = currentData.map(item => {
+        const isMastered = masteredSet.has(item.id);
+        return `
+          <div class="qa-card ${isMastered ? 'mastered' : ''} ${isAllExpanded ? 'open' : ''}" id="card-${item.id}">
+            <div class="qa-header" onclick="toggleItem(${item.id})">
+              <span class="qa-id">#${item.id}</span>
+              <span class="qa-question">${escapeHtml(item.question)}</span>
+              <div class="qa-actions">
+                <button class="master-btn ${isMastered ? 'is-mastered' : ''}"
+                        onclick="toggleMaster(event, ${item.id})"
+                        title="${isMastered ? '已掌握' : '標記掌握'}">★</button>
+                <span class="expand-icon">▼</span>
+              </div>
+            </div>
+            <div class="qa-answer">${escapeHtml(item.answer)}</div>
+          </div>
+        `;
+      }).join('');
+
+      renderMath();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function toggleItem(id) {
+      const el = document.getElementById('card-' + id);
+      if (el) {
+        el.classList.toggle('open');
+      }
+    }
+
+    function toggleMaster(event, id) {
+      event.stopPropagation();
+      if (masteredSet.has(id)) {
+        masteredSet.delete(id);
+      } else {
+        masteredSet.add(id);
+      }
+      saveMastered();
+      applyFilters();
+    }
+
+    function toggleExpandAll() {
+      isAllExpanded = !isAllExpanded;
+      document.getElementById('expandAllBtn').textContent = isAllExpanded ? "收合全部" : "展開全部";
+      document.querySelectorAll('.qa-card').forEach(card => {
+        if (isAllExpanded) {
+          card.classList.add('open');
+        } else {
+          card.classList.remove('open');
+        }
+      });
+    }
+
+    function toggleFilterMastered() {
+      filterOnlyUnmastered = !filterOnlyUnmastered;
+      const btn = document.getElementById('filterMasteredBtn');
+      btn.classList.toggle('active-filter', filterOnlyUnmastered);
+      btn.textContent = filterOnlyUnmastered ? "✓ 僅顯示未掌握" : "⭐ 只看未掌握";
+      applyFilters();
+    }
+
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      currentData = RAW_DATA.filter(item => {
+        if (filterOnlyUnmastered && masteredSet.has(item.id)) {
+          return false;
+        }
+        if (query) {
+          const matchQ = item.question.toLowerCase().includes(query);
+          const matchA = item.answer.toLowerCase().includes(query);
+          return matchQ || matchA;
+        }
+        return true;
+      });
+
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+      updateStats();
+    }
+
+    function shuffleCards() {
+      currentData.sort(() => Math.random() - 0.5);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function resetOrder() {
+      currentData.sort((a, b) => a.id - b.id);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const listBtn = document.getElementById('listViewBtn');
+      const cardBtn = document.getElementById('cardViewBtn');
+      const qaList = document.getElementById('qaList');
+      const flashcardContainer = document.getElementById('flashcardContainer');
+      const expandAllBtn = document.getElementById('expandAllBtn');
+
+      if (mode === 'list') {
+        listBtn.classList.add('active');
+        cardBtn.classList.remove('active');
+        qaList.style.display = 'flex';
+        flashcardContainer.style.display = 'none';
+        expandAllBtn.style.display = 'inline-flex';
+        renderList();
+      } else {
+        cardBtn.classList.add('active');
+        listBtn.classList.remove('active');
+        qaList.style.display = 'none';
+        flashcardContainer.style.display = 'flex';
+        expandAllBtn.style.display = 'none';
+        updateCardView();
+      }
+    }
+
+    /* Flashcard Functions */
+    function flipCard() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.toggle('flipped');
+    }
+
+    function updateCardView() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.remove('flipped');
+
+      if (currentData.length === 0) {
+        document.getElementById('fcQuestion').textContent = '無卡片資料';
+        document.getElementById('fcAnswer').textContent = '無卡片資料';
+        document.getElementById('fcCardNumber').textContent = '0 / 0';
+        document.getElementById('fcCardNumberBack').textContent = '0 / 0';
+        return;
+      }
+
+      if (cardIndex < 0) cardIndex = 0;
+      if (cardIndex >= currentData.length) cardIndex = currentData.length - 1;
+
+      const item = currentData[cardIndex];
+      const isMastered = masteredSet.has(item.id);
+
+      document.getElementById('fcQuestion').textContent = item.question;
+      document.getElementById('fcAnswer').textContent = item.answer;
+
+      const cardNumText = `卡片 ${cardIndex + 1} / ${currentData.length} (#${item.id})`;
+      document.getElementById('fcCardNumber').textContent = cardNumText;
+      document.getElementById('fcCardNumberBack').textContent = cardNumText;
+
+      const btn1 = document.getElementById('fcMasterBtn');
+      const btn2 = document.getElementById('fcMasterBtnBack');
+      btn1.classList.toggle('is-mastered', isMastered);
+      btn2.classList.toggle('is-mastered', isMastered);
+
+      renderMath();
+    }
+
+    function prevCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex - 1 + currentData.length) % currentData.length;
+      updateCardView();
+    }
+
+    function nextCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex + 1) % currentData.length;
+      updateCardView();
+    }
+
+    function toggleCardMaster(event) {
+      event.stopPropagation();
+      if (currentData.length === 0) return;
+      const item = currentData[cardIndex];
+      toggleMaster(event, item.id);
+      updateCardView();
+    }
+
+    /* Keyboard Shortcuts */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (currentMode === 'card') {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          flipCard();
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          prevCard();
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          nextCard();
+        } else if (e.code === 'KeyM') {
+          e.preventDefault();
+          toggleCardMaster(e);
+        }
+      }
+    });
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      updateStats();
+      renderList();
+      setTimeout(renderMath, 200);
+    });
+  </script>
+</body>
+</html>

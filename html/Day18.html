@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day18 - 問答複習卡</title>
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-light: #eff6ff;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --accent: #f59e0b;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+
+    html[data-theme="dark"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-hover: #3b82f6;
+      --primary-light: #1e3a8a33;
+      --border-color: #334155;
+      --success: #34d399;
+      --success-light: #064e3b33;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    /* Navigation / Header */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .view-toggles {
+      display: flex;
+      background: var(--bg-color);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .toggle-btn {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-toggle {
+      padding: 7px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--border-color);
+    }
+
+    .btn.active-filter {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 99px;
+      margin: 0 16px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* List View Cards */
+    .qa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .qa-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .qa-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .qa-card.mastered {
+      border-left: 4px solid var(--success);
+    }
+
+    .qa-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .qa-id {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .qa-question {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      padding-top: 2px;
+    }
+
+    .qa-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .master-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+      transition: transform 0.15s, color 0.15s;
+    }
+
+    .master-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .master-btn.is-mastered {
+      color: var(--accent);
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .qa-card.open .expand-icon {
+      transform: rotate(180deg);
+    }
+
+    .qa-answer {
+      display: none;
+      padding: 16px 20px 18px 60px;
+      background: var(--bg-color);
+      border-top: 1px dashed var(--border-color);
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.7;
+    }
+
+    .qa-card.open .qa-answer {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Flashcard Mode */
+    .flashcard-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+    }
+
+    .flashcard-wrapper {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 640px;
+      min-height: 340px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .flashcard-wrapper.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-sizing: border-box;
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .card-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .badge-q {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-a {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .card-body {
+      margin: auto 0;
+      padding: 20px 10px;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .card-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .flashcard-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .flashcard-controls .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .shortcuts-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="nav-left">
+        <a href="index.html" class="back-btn" title="回目錄">← 目錄</a>
+        <h1 class="page-title">Day18 問答卡</h1>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()" aria-label="切換為深色模式">深色模式</button>
+        <div class="view-toggles">
+          <button id="listViewBtn" class="toggle-btn active" onclick="switchMode('list')">📋 列表模式</button>
+          <button id="cardViewBtn" class="toggle-btn" onclick="switchMode('card')">🎴 翻卡測驗</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜尋問題或答案關鍵字..." oninput="handleSearch()">
+      </div>
+      <div class="action-buttons">
+        <button class="btn" id="filterMasteredBtn" onclick="toggleFilterMastered()">⭐ 只看未掌握</button>
+        <button class="btn" id="expandAllBtn" onclick="toggleExpandAll()">展開全部</button>
+        <button class="btn" onclick="shuffleCards()">🔀 隨機洗牌</button>
+        <button class="btn" onclick="resetOrder()">🔄 恢復順序</button>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <span id="statsCount">總計 0 題</span>
+      <div class="progress-bar-container">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <span id="statsMastered">掌握率 0%</span>
+    </div>
+
+    <!-- List View -->
+    <div id="qaList" class="qa-list"></div>
+
+    <!-- Flashcard Mode View -->
+    <div id="flashcardContainer" class="flashcard-container">
+      <div class="flashcard-wrapper" id="flashcardWrapper" onclick="flipCard()">
+        <div class="flashcard-inner">
+          <!-- Front Face -->
+          <div class="flashcard-face flashcard-front">
+            <div class="card-top">
+              <span class="card-badge badge-q">問題</span>
+              <span id="fcCardNumber">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtn" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcQuestion">載入中...</div>
+            <div class="card-hint">💡 點擊卡片或按空白鍵翻面看答案</div>
+          </div>
+          <!-- Back Face -->
+          <div class="flashcard-face flashcard-back">
+            <div class="card-top">
+              <span class="card-badge badge-a">解答</span>
+              <span id="fcCardNumberBack">卡片 1 / 1</span>
+              <button class="master-btn" id="fcMasterBtnBack" onclick="toggleCardMaster(event)" title="標記為已掌握">★</button>
+            </div>
+            <div class="card-body" id="fcAnswer">載入中...</div>
+            <div class="card-hint">💡 再次點擊卡片翻回正面</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn" onclick="prevCard()">← 上一題</button>
+        <button class="btn btn-primary" onclick="flipCard()">翻轉卡片</button>
+        <button class="btn" onclick="nextCard()">下一題 →</button>
+      </div>
+      <div class="shortcuts-hint">鍵盤快速鍵：[←] 上一題 · [空白鍵] 翻面 · [→] 下一題 · [M] 標記掌握</div>
+    </div>
+  </main>
+
+  <script>
+    const THEME_STORAGE_KEY = "qa_theme";
+    const STORAGE_KEY = "anki_mastered_" + "Day18";
+    const RAW_DATA = [{"id":1,"question":"在影像分類任務中，利用 PCA 將特徵從 1024 維降至 100 維的主要技術目的是什麼？","answer":"降低訓練時間並減少過擬合 (Overfitting) 的風險。"},{"id":2,"question":"PCA 處理後的主成分是否「必然」能提升 SVM 的分類準確率？","answer":"否，降維過程可能會丟失對分類關鍵的資訊。"},{"id":3,"question":"機器學習在信用卡欺詐偵測中面臨最嚴峻的資料集挑戰為何？","answer":"極端的類別不平衡 (Class Imbalance)。"},{"id":4,"question":"根據 MLG-ULB 基準資料集，欺詐交易佔總交易量的比例大約是多少？","answer":"$0.172\\% $。"},{"id":5,"question":"哪種傳統機器學習演算法在多項信用卡欺詐研究中表現最優，甚至達到 $99.98\\% $ 的準確率？","answer":"隨機森林 (Random Forest)。"},{"id":6,"question":"在處理信用卡交易的時間序列模式時，哪種深度學習架構最為有效？","answer":"長短期記憶網絡 (LSTM)。"},{"id":7,"question":"為什麼在欺詐偵測中，ROC 曲線的評價有時會比 Precision-Recall (PR) 曲線更「過於樂觀」？","answer":"因為 ROC 曲線包含真陰性 (TN)，在多數類別極大時會稀釋錯誤率。"},{"id":8,"question":"在 MLOps 流程中，主動偵測模型因輸入資料分布改變而準確率下降的機制稱為？","answer":"資料漂移 (Data Drift) 與概念漂移 (Concept Drift) 監測。"},{"id":9,"question":"若要解決 DBSCAN 演算法在處理高維大數據時的速度與記憶體問題，建議採用的索引結構為何？","answer":"KD-Tree 或 Ball Tree。"},{"id":10,"question":"在多任務學習架構中，若不同任務（如分類與命名實體辨識）的準確率產生競爭，通常需調整什麼？","answer":"損失函數 (Loss Function) 的權重平衡。"},{"id":11,"question":"擴散生成模型 (Diffusion Models) 若出現影像像素錯誤，最常見的技術原因為何？","answer":"去雜訊過程出現隨機梯度漂移。"},{"id":12,"question":"AI 欺詐偵測中，傳統「基於規則」(Rule-based) 系統的主要缺點是什麼？","answer":"難以偵測演變中的新模式，且易產生高誤報率 (False Positives)。"},{"id":13,"question":"什麼是「上下文工程」(Context Engineering)？","answer":"系統化地提供 AI 模型決策當下的短期與長期環境資訊，以提高準確性。"},{"id":14,"question":"即時 AI 欺詐偵測系統中，提供模型上下文資訊的關鍵基礎設施組件為何？","answer":"即時特徵存儲 (Real-time Feature Store)。"},{"id":15,"question":"為了不中斷用戶體驗，信用卡交易的風險評分通常需在多少毫秒內完成？","answer":"50 毫秒。"},{"id":16,"question":"AI 欺詐偵測中的「混合引擎」(Hybrid Engine) 通常結合了哪兩者？","answer":"規則引擎 (Rules Engine) 與機器學習模型 (ML Model)。"},{"id":17,"question":"什麼是「帳戶接管」(Account Takeover, ATO)？","answer":"未經授權的第三方獲得合法用戶帳戶控制權的非法行為。"},{"id":18,"question":"在信用卡欺詐偵測中，SMOTE 技術的主要功能為何？","answer":"通過合成樣本對少數類別進行過採樣，以平衡資料分布。"},{"id":19,"question":"什麼是「概念漂移」(Concept Drift)？","answer":"預測目標的統計屬性（如欺詐者的手段）隨時間發生的變化。"},{"id":20,"question":"在特徵工程中，將時間戳轉換為周期性特徵的常見方法為何？","answer":"使用正弦 ($\\\\sin$) 與餘弦 ($\\\\cos$) 函數進行循環變換。"},{"id":21,"question":"為什麼要對交易金額 (Amount) 進行對數轉換 ($ln(1 + Amount)$)？","answer":"為了壓縮極大值的變異度，並減輕資料的偏態分布。"},{"id":22,"question":"什麼是「數據洩漏」(Data Leakage)？","answer":"訓練資料中包含了在實際預測場景中無法獲得的資訊，導致評估結果虛高。"},{"id":23,"question":"在 ESEM 研究中，為什麼 SMOTE 必須在「交叉驗證循環內部」執行？","answer":"為了防止合成樣本洩漏到驗證集中，導致模型效能被錯誤估計。"},{"id":24,"question":"集成學習中的「堆疊」(Stacking) 策略核心邏輯為何？","answer":"利用第一層多個基模型的預測結果作為輸入，由第二層元模型 (Meta-model) 做出最終決定。"},{"id":25,"question":"ESEM 模型選用 Ridge Logistic Regression 作為元模型的原因為何？","answer":"其 $L_2$ 懲罰項能穩定受基模型高度相關性影響的係數。"},{"id":26,"question":"什麼是可解釋 AI (XAI) 中的 SHAP 值？","answer":"基於博弈論，衡量各個特徵對模型特定預測結果貢獻度的指標。"},{"id":27,"question":"在金融監管（如 GDPR）背景下，AI 模型的哪種屬性對於拒絕服務的決定至關重要？","answer":"透明度與可審計性（說明權）。"},{"id":28,"question":"什麼是「動態閾值優化」(Dynamic Threshold Optimization)？","answer":"不使用固定的 $0.5$ 閾值，而是根據資料分布動態尋找能最大化 F1-score 的分界點。"},{"id":29,"question":"在信用卡欺詐資料集中，PCA 轉換後的特徵 (V1-V28) 通常有什麼特性？","answer":"它們是去識別化後的數值特徵，失去了原始的物理意義。"},{"id":30,"question":"什麼是「合成身份欺詐」(Synthetic Identity Fraud)？","answer":"結合真實與虛假資訊創建全新身份進行的欺詐行為。"},{"id":31,"question":"在即時欺詐偵測流程中，「特徵檢索」通常是哪一個環節的瓶頸？","answer":"從資料庫獲取上下文資料的階段。"},{"id":32,"question":"為何「內存資料庫」(In-memory Database) 適合用於特徵存儲？","answer":"能將檢索時間從毫秒級降低到微秒級，滿足嚴苛的延遲預算。"},{"id":33,"question":"什麼是「自動編碼器」(Autoencoders) 在欺詐偵測中的應用方式？","answer":"透過計算重構誤差來識別異常值，誤差越大代表該交易越可疑。"},{"id":34,"question":"集成學習中的「軟投票」(Soft Voting) 與「硬投票」(Hard Voting) 有何區別？","answer":"軟投票考慮類別概率的加權平均，硬投票僅考慮各模型的分類標籤多數決。"},{"id":35,"question":"在評估指標中，「精確率」(Precision) 代表的業務意義為何？","answer":"在所有系統發出的欺詐警報中，實際真的是欺詐的比例。"},{"id":36,"question":"在評估指標中，「召回率」(Recall) 代表的業務意義為何？","answer":"在所有實際發生的欺詐交易中，系統成功攔截到的比例。"},{"id":37,"question":"什麼是「洗錢」(Anti-Money Laundering, AML) 監控？","answer":"識別複雜的交易模式，以防範非法資金來源被隱匿的行為。"},{"id":38,"question":"在 XAI 研究中，V14 特徵被發現是全球最重要的預測因子，這代表什麼？","answer":"該匿名特徵包含了區分合法與欺詐行為最強的統計信號。"},{"id":39,"question":"什麼是「圖神經網路」(GNN) 在欺詐偵測中的潛力？","answer":"能建模交易間的關係與使用者行為圖譜，偵測協同犯罪團體。"},{"id":40,"question":"「聯邦學習」(Federated Learning) 如何協助金融機構合作？","answer":"讓各機構能在不交換原始敏感資料的前提下，協同訓練欺詐偵測模型。"},{"id":41,"question":"在欺詐偵測中，「誤報」(False Positive) 過多會導致什麼負面後果？","answer":"損害客戶體驗（如合法交易被拒）並增加人工審核的營運成本。"},{"id":42,"question":"什麼是「孤立森林」(Isolation Forest)？","answer":"一種非監督式演算法，透過隨機切分空間來找出容易被孤立的異常樣本。"},{"id":43,"question":"「特徵工程」與「特徵選擇」的區別為何？","answer":"前者是創造新特徵，後者是從現有特徵中挑選出最有影響力的子集。"},{"id":44,"question":"在深度學習模型中，「注意力機制」(Attention Mechanism) 的功能為何？","answer":"讓模型能自動學習並聚焦於對決策最重要的輸入特徵。"},{"id":45,"question":"什麼是「黑箱模型」(Black-box Model)？","answer":"內部邏輯極其複雜（如多層神經網路），難以直觀解釋決策原因的模型。"},{"id":46,"question":"在欺詐偵測中，為什麼系統通常需要「人工在環」(Human-in-the-loop)？","answer":"處理高風險但邊緣的案例，並提供回饋以優化 AI 模型。"},{"id":47,"question":"什麼是「偽陽性成本」(Cost of False Positives)？","answer":"包含流失的銷售額、客戶不滿以及處理申訴的行政費用。"},{"id":48,"question":"為何「過適」(Overfitting) 在欺詐偵測中特別危險？","answer":"模型可能只記住過去的欺詐案例，而無法泛化到新型態的欺詐手段。"},{"id":49,"question":"根據研究，XGBoost 在全域過採樣 (Global SMOTE) 下精確率崩潰的原因為何？","answer":"嚴重的數據洩漏導致模型在測試集上觸發過多虛假警報。"},{"id":50,"question":"在金融領域，SHAP 的「摘要圖」(Summary Plot) 能展示什麼資訊？","answer":"特徵的影響量值、方向（正向或負向影響）及其分布情況。"},{"id":51,"question":"什麼是「量化模型」(Model Quantization)？","answer":"降低模型參數的數值精度以減少運算開銷並降低延遲。"},{"id":52,"question":"在處理高頻交易時，AI 推論通常需要在哪種環境部署以保證速度？","answer":"邊緣運算 (Edge Computing) 或高效能伺服器集群。"},{"id":53,"question":"「對比學習」(Contrastive Learning) 在多模態生成中的作用為何？","answer":"建立不同模態（如文字與影像）之間的語意關聯。"},{"id":54,"question":"什麼是「梯度提升樹」(Gradient Boosted Trees)？","answer":"一種集成技術，透過連續訓練多個弱分類器，每個分類器都試圖糾正前一個的錯誤。"},{"id":55,"question":"在 MLG-ULB 資料集中，'Time' 特徵代表什麼？","answer":"當前交易與資料集中第一筆交易之間流逝的總秒數。"},{"id":56,"question":"為什麼單純的「準確率」(Accuracy) 不適合作為欺詐偵測的指標？","answer":"因為在極端不平衡下，即使模型猜測全部是合法交易，準確率仍能超過 $99\\% $。"},{"id":57,"question":"什麼是「對稱均方根誤差」(SMAPE) 或類似的損失調整？","answer":"用於處理具有異方差性或極大偏態分布的數值回歸任務。"},{"id":58,"question":"在 ESEM 架構中，'OOF' 代表什麼意義？","answer":"Out-of-Fold，指基模型在訓練過程中對未見過的驗證折疊產生的預測。"},{"id":59,"question":"什麼是「語意嵌入」(Semantic Embedding)？","answer":"將類別或文字轉換為高維空間中的向量，使語意相近的項目距離較短。"},{"id":60,"question":"「局部可解釋模型無關說明」(LIME) 的核心思想為何？","answer":"在特定樣本的局部區域訓練一個簡單的可解釋模型來近似複雜模型的行為。"},{"id":61,"question":"欺詐偵測系統中，「挑戰」(Challenge) 決策通常指什麼？","answer":"要求用戶提供額外的身份驗證（如 OTP 或生物辨識）。"},{"id":62,"question":"什麼是「差異隱私」(Differential Privacy)？","answer":"在分析資料集時加入雜訊，以保護個別樣本的資訊不被洩漏。"},{"id":63,"question":"在信用卡欺詐偵測中，「二日效應」是指什麼？","answer":"MLG-ULB 資料集僅涵蓋 48 小時，難以分析長期的欺詐演化趨勢。"},{"id":64,"question":"什麼是「對應區域」(Area Under Curve, AUC) 的物理意義？","answer":"隨機挑選一個正樣本與一個負樣本，模型將正樣本排在負樣本前面的概率。"},{"id":65,"question":"在即時決策中，「延遲預算」(Latency Budget) 是指什麼？","answer":"分配給各個處理階段（如檢索、推論、邏輯決策）的最大容許時間。"},{"id":66,"question":"什麼是「特徵歸一化」(Normalization)？","answer":"將特徵數值縮放至特定區間（如 0 到 1），以利梯度下降演算法收斂。"},{"id":67,"question":"為什麼欺詐偵測模型需要定期「重新訓練」？","answer":"為了適應不斷變化的欺詐手段（對抗概念漂移）。"},{"id":68,"question":"在 ESEM 模型中，哪種基模型展現了最強的單體 PR-AUC 效能？","answer":"LightGBM。"},{"id":69,"question":"什麼是「元分類器」(Meta-classifier)？","answer":"在堆疊集成學習中，負責整合所有基礎分類器預測結果的模型。"},{"id":70,"question":"在處理大規模資料時，哪種運算硬體能顯著加速深度學習推論？","answer":"圖形處理器 (GPU) 或張量處理器 (TPU)。"},{"id":71,"question":"什麼是「位置編碼」(Positional Encoding) 在 Transformer 中的作用？","answer":"提供序列中各個元素的相對或絕對位置資訊。"},{"id":72,"question":"在欺詐偵測中，'V1' 到 'V28' 特徵的零均值 (Zero-centered) 特性源自於？","answer":"PCA (主成分分析) 的預處理過程。"},{"id":73,"question":"什麼是「行為生物辨識」(Behavioral Biometrics)？","answer":"分析用戶特有的互動模式（如打字速度、鼠標移動）來驗證身份。"},{"id":74,"question":"在集成模型中，提高模型間的「多樣性」(Diversity) 有什麼好處？","answer":"能讓不同模型捕獲資料中的不同特徵，進而提高整體穩健性。"},{"id":75,"question":"什麼是「數據歸檔」(Data Archiving) 對欺詐偵測的影響？","answer":"舊交易資料的封存可能導致模型缺乏對長期規律的學習。"},{"id":76,"question":"在可解釋性中，「全球解釋」與「局部解釋」有何不同？","answer":"全球解釋說明整體模型邏輯，局部解釋說明單一交易被判為欺詐的原因。"},{"id":77,"question":"什麼是「多模態學習」(Multi-modal Learning)？","answer":"整合來自多種來源（如文字、影像、數值）的資訊進行學習。"},{"id":78,"question":"在 AI 欺詐偵測未來趨勢中，'Explainability' 的重要性為何？","answer":"它是建立金融機構信任與符合法律法規審核的基礎。"}];
+    let currentData = [...RAW_DATA];
+    let masteredSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+    let currentMode = 'list';
+    let filterOnlyUnmastered = false;
+    let isAllExpanded = false;
+    let cardIndex = 0;
+
+    function applyTheme(theme) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.dataset.theme = normalizedTheme;
+
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) {
+        const isDark = normalizedTheme === "dark";
+        btn.textContent = isDark ? "淺色模式" : "深色模式";
+        btn.setAttribute("aria-label", isDark ? "切換為淺色模式" : "切換為深色模式");
+      }
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "light";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      applyTheme(nextTheme);
+    }
+
+    initializeTheme();
+
+    function saveMastered() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(masteredSet)));
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = RAW_DATA.length;
+      const masteredCount = RAW_DATA.filter(item => masteredSet.has(item.id)).length;
+      const pct = total === 0 ? 0 : Math.round((masteredCount / total) * 100);
+
+      document.getElementById('statsCount').textContent = `顯示 ${currentData.length} / 共 ${total} 題`;
+      document.getElementById('statsMastered').textContent = `已掌握 ${masteredCount} 題 (${pct}%)`;
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    function renderMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function renderList() {
+      const container = document.getElementById('qaList');
+      if (currentData.length === 0) {
+        container.innerHTML = '<div class="empty-state">沒有符合條件的問答卡片</div>';
+        return;
+      }
+
+      container.innerHTML = currentData.map(item => {
+        const isMastered = masteredSet.has(item.id);
+        return `
+          <div class="qa-card ${isMastered ? 'mastered' : ''} ${isAllExpanded ? 'open' : ''}" id="card-${item.id}">
+            <div class="qa-header" onclick="toggleItem(${item.id})">
+              <span class="qa-id">#${item.id}</span>
+              <span class="qa-question">${escapeHtml(item.question)}</span>
+              <div class="qa-actions">
+                <button class="master-btn ${isMastered ? 'is-mastered' : ''}"
+                        onclick="toggleMaster(event, ${item.id})"
+                        title="${isMastered ? '已掌握' : '標記掌握'}">★</button>
+                <span class="expand-icon">▼</span>
+              </div>
+            </div>
+            <div class="qa-answer">${escapeHtml(item.answer)}</div>
+          </div>
+        `;
+      }).join('');
+
+      renderMath();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function toggleItem(id) {
+      const el = document.getElementById('card-' + id);
+      if (el) {
+        el.classList.toggle('open');
+      }
+    }
+
+    function toggleMaster(event, id) {
+      event.stopPropagation();
+      if (masteredSet.has(id)) {
+        masteredSet.delete(id);
+      } else {
+        masteredSet.add(id);
+      }
+      saveMastered();
+      applyFilters();
+    }
+
+    function toggleExpandAll() {
+      isAllExpanded = !isAllExpanded;
+      document.getElementById('expandAllBtn').textContent = isAllExpanded ? "收合全部" : "展開全部";
+      document.querySelectorAll('.qa-card').forEach(card => {
+        if (isAllExpanded) {
+          card.classList.add('open');
+        } else {
+          card.classList.remove('open');
+        }
+      });
+    }
+
+    function toggleFilterMastered() {
+      filterOnlyUnmastered = !filterOnlyUnmastered;
+      const btn = document.getElementById('filterMasteredBtn');
+      btn.classList.toggle('active-filter', filterOnlyUnmastered);
+      btn.textContent = filterOnlyUnmastered ? "✓ 僅顯示未掌握" : "⭐ 只看未掌握";
+      applyFilters();
+    }
+
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      currentData = RAW_DATA.filter(item => {
+        if (filterOnlyUnmastered && masteredSet.has(item.id)) {
+          return false;
+        }
+        if (query) {
+          const matchQ = item.question.toLowerCase().includes(query);
+          const matchA = item.answer.toLowerCase().includes(query);
+          return matchQ || matchA;
+        }
+        return true;
+      });
+
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+      updateStats();
+    }
+
+    function shuffleCards() {
+      currentData.sort(() => Math.random() - 0.5);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function resetOrder() {
+      currentData.sort((a, b) => a.id - b.id);
+      cardIndex = 0;
+      if (currentMode === 'list') {
+        renderList();
+      } else {
+        updateCardView();
+      }
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const listBtn = document.getElementById('listViewBtn');
+      const cardBtn = document.getElementById('cardViewBtn');
+      const qaList = document.getElementById('qaList');
+      const flashcardContainer = document.getElementById('flashcardContainer');
+      const expandAllBtn = document.getElementById('expandAllBtn');
+
+      if (mode === 'list') {
+        listBtn.classList.add('active');
+        cardBtn.classList.remove('active');
+        qaList.style.display = 'flex';
+        flashcardContainer.style.display = 'none';
+        expandAllBtn.style.display = 'inline-flex';
+        renderList();
+      } else {
+        cardBtn.classList.add('active');
+        listBtn.classList.remove('active');
+        qaList.style.display = 'none';
+        flashcardContainer.style.display = 'flex';
+        expandAllBtn.style.display = 'none';
+        updateCardView();
+      }
+    }
+
+    /* Flashcard Functions */
+    function flipCard() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.toggle('flipped');
+    }
+
+    function updateCardView() {
+      const wrapper = document.getElementById('flashcardWrapper');
+      wrapper.classList.remove('flipped');
+
+      if (currentData.length === 0) {
+        document.getElementById('fcQuestion').textContent = '無卡片資料';
+        document.getElementById('fcAnswer').textContent = '無卡片資料';
+        document.getElementById('fcCardNumber').textContent = '0 / 0';
+        document.getElementById('fcCardNumberBack').textContent = '0 / 0';
+        return;
+      }
+
+      if (cardIndex < 0) cardIndex = 0;
+      if (cardIndex >= currentData.length) cardIndex = currentData.length - 1;
+
+      const item = currentData[cardIndex];
+      const isMastered = masteredSet.has(item.id);
+
+      document.getElementById('fcQuestion').textContent = item.question;
+      document.getElementById('fcAnswer').textContent = item.answer;
+
+      const cardNumText = `卡片 ${cardIndex + 1} / ${currentData.length} (#${item.id})`;
+      document.getElementById('fcCardNumber').textContent = cardNumText;
+      document.getElementById('fcCardNumberBack').textContent = cardNumText;
+
+      const btn1 = document.getElementById('fcMasterBtn');
+      const btn2 = document.getElementById('fcMasterBtnBack');
+      btn1.classList.toggle('is-mastered', isMastered);
+      btn2.classList.toggle('is-mastered', isMastered);
+
+      renderMath();
+    }
+
+    function prevCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex - 1 + currentData.length) % currentData.length;
+      updateCardView();
+    }
+
+    function nextCard() {
+      if (currentData.length === 0) return;
+      cardIndex = (cardIndex + 1) % currentData.length;
+      updateCardView();
+    }
+
+    function toggleCardMaster(event) {
+      event.stopPropagation();
+      if (currentData.length === 0) return;
+      const item = currentData[cardIndex];
+      toggleMaster(event, item.id);
+      updateCardView();
+    }
+
+    /* Keyboard Shortcuts */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (currentMode === 'card') {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          flipCard();
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          prevCard();
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          nextCard();
+        } else if (e.code === 'KeyM') {
+          e.preventDefault();
+          toggleCardMaster(e);
+        }
+      }
+    });
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      updateStats();
+      renderList();
+      setTimeout(renderMath, 200);
+    });
+  </script>
+</body>
+</html>

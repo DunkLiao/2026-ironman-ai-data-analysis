@@ -1,0 +1,75 @@
+什麼是 OpenAI 共同創辦人 Andrej Karpathy 提出的「Vibe Coding」？	一種強調以自然語言與 AI 協作，由 AI 自動生成程式邏輯與架構的開發模式。
+Karpathy 形容 Vibe Coding 為「最新且最熱門的程式語言」，他指的是哪種語言？	英文（自然語言）。
+Vibe Coding 的開發流程重心從「怎麼寫程式」轉變成了什麼？	「要做什麼」以及「這樣做對不對」。
+在 Vibe Coding 中，開發者應扮演什麼樣的新角色？	懂技術的產品設計師或需求架構師。
+Vibe Coding 流程中的「即時互動式」開發是指什麼？	當 AI 生成不如預期時，直接用自然語言回饋（如「加上錯誤處理」）讓 AI 調整。
+傳統寫程式與 Vibe Coding 在技術門檻上的主要差異為何？	傳統需精通語法，Vibe Coding 則只需懂概念與描述邏輯即可上手。
+Vibe Coding 在中大型專案中若缺乏模組化設計，容易導致什麼風險？	技術債快速堆積。
+為何 Vibe Coding 適合用於快速原型開發（Rapid Prototyping）？	因為它能即時產生樣板程式碼，大幅縮短 MVP（最小可行產品）的驗證時程。
+列舉三款支援 Vibe Coding 的 AI 驅動程式碼編輯器。	Cursor、Windsurf、GitHub Copilot。
+Cursor 編輯器的哪一個界面讓使用者能透過對話生成函式或修正錯誤？	Composer 聊天介面。
+在 Vibe Coding 工具中，Gemini 模型相較於其他模型的主要技術優勢為何？	支援高達 $100$ 萬 token 的超長上下文視窗。
+哪一個線上程式碼平台內建了 Ghostwriter AI，適合非技術背景者入門？	Replit。
+提高 Vibe Coding 輸出品質的「行動 + 目的」技巧是指什麼？	在 Prompt 中明確指出要執行的動作與預期的結果（例如：用 Python 寫一個讀取 CSV 的函式）。
+在 Prompt 工程中，「負向提示（Negative Prompting）」的主要作用是什麼？	告訴 AI 應該避免什麼（例如：不要四捨五入、不要包含估算值）。
+金融專業人士應如何使用 RTC 框架來建構 Prompt？	定義角色（Role）、任務（Task）與背景（Context）。
+金融 Prompt 中的「思維鏈（Chain of Thought）」技術有何好處？	強迫模型展示計算步驟，建立可供審核的稽核軌跡（Audit Trail）。
+在 Python 平行運算中，何時適合使用 Multi-Processing 而非 Multi-Thread？	在進行需要 CPU 持續計算的「資料前處理」任務時。
+Python 的 multiprocessing 模組中，哪一個工具可以自動建立分工機制？	multiprocessing.pool。
+Python 平行運算中的 Map 階段主要執行什麼動作？	將分割後的參數丟到多個進程中執行特定的 Function 並蒐集結果。
+在金融數據分析中，NumPy 庫的核心數據類型是什麼？	多維陣列（Multidimensional Array）。
+哪一個 Python 庫是專為量化金融中的數據分析（如時序數據處理）而設計的？	Pandas。
+如果需要進行投資組合風險分析並生成「淚表（Tear Sheet）」，應使用哪一個 Python 庫？	Pyfolio。
+Zipline 庫在金融科技領域的主要用途為何？	演算法交易模擬（支援回測與實盤交易）。
+Claude Code 被定義為一種「終端代理人（Terminal Agent）」，其運作的核心循環是什麼？	模型提議動作、外殼執行動作、輸出回饋給下一個決策。
+Claude Code 中的 CLAUDE.md 文件存放在哪裡？	專案根目錄（Repo root）。
+在 Claude Code 的擴充模型中，「Hooks（鉤子）」與「Skills（技能）」有何本質區別？	Hooks 是確定性的（發生特定事件必執行），Skills 是模型裁量的（依指令調用）。
+什麼是 Claude Code 的「Plan Mode」？	一種唯讀的研究狀態，AI 在修改文件前先產出計畫供使用者核准。
+Claude Code 中的「Subagents（子代理）」主要解決什麼問題？	將嘈雜的側向任務（如日誌查詢）與主對話內容隔離，避免充滿上下文視窗。
+Model Context Protocol (MCP) 在 Claude Code 中的作用為何？	讓代理能連接 Repo 之外的外部工具，如 Jira、資料庫或瀏覽器。
+Claude Code 存在什麼樣的「驗證缺口（Verification Gap）」？	它無法直接看到 UI 渲染結果，僅能透過退出代碼、測試輸出等終端訊息驗證。
+台灣 AI 產品與系統評測中心（AIEC）提出的十大評測項目中，哪兩項被視為純粹的「品質面」指標？	準確性（Accuracy）與可靠性（Reliability）。
+根據 AI 專案資安合規檢核表，如何佐證系統具備「當責性（Accountability）」？	提供雜湊鏈稽核日誌（Hash-chain Audit Logs）。
+在 AI 安全自評中，若某項目宣稱已落實但「佐證檔案不存在」，應如何標記？	證據不全（Unproven）。
+Human-In-The-Loop (HITL) 的核心定義為何？	在 AI 系統輸出最終確定前，必須經過人類的評估與決策。
+Human-On-The-Loop (HOTL) 與 HITL 有何不同？	HOTL 中 AI 自主運行，但人類監視並保留干預權；HITL 中人類干預是決策過程的必要部分。
+在臨床研究中，為何 HITL 需要「領域專家」而非初級員工？	因為初級員工可能無法批判性地評估 AI 輸出，容易產生「自動化偏見」或誤解模型。
+何謂「自動化流程中的資料抓取（Web Scraping）」？	使用工具（如 Python）從網頁中自動提取股票數據、新聞或報告。
+使用 Python 進行金融分析時，常見的「安全疑慮」是什麼？	開源語言特性若使用不當，可能導致數據隱私洩露或遭受網絡威脅。
+Python 的 SciPy 庫在金融應用中的主要貢獻是什麼？	提供數值積分、優化方法等高級科學計算程序。
+在 Vibe Coding 技巧中，如何使用註解（Comments）輔助 AI？	在程式碼前加上說明意圖的註解，協助 AI 準確理解邏輯目的。
+為什麼 Vibe Coding 可能會影響系統的穩定性？	因為 AI 生成的代碼可能隱藏細微邏輯錯誤，特別是在處理異常狀況時。
+在 Claude Code 中，「Plugins（插件）」層級的主要價值為何？	將 Skills、Agents、Hooks 等打包成可版本化、易於在團隊間共享的成品。
+AIEC 評測項目中的「彈性（Resilience）」在資安層面如何定義？	系統受到擾動時能撐住，且事後能夠恢復的能力。
+在金融 Prompt 中，為什麼要明確指定「角色（Role）」？	模型會根據不同身份（如 CFO vs 初級分析師）調整輸出的深度與語氣。
+為何 AI 工具產出的 VBA 程式碼能降低職場自動化的難度？	使用者只需輸入功能需求（指令），不需自行掌握複雜的 VBA 語法。
+什麼是「資料治理中的去識別化（De-identification）」？	移除或屏蔽數據中的個人識別資訊，以符合隱私保護原則。
+在多進程處理中，為什麼「Process 間無法共享資料」是一個重要限制？	若運算過程需要頻繁讀寫共同的全局對象（如 Graph），則不適合多進程。
+Statsmodels 庫在 Python 金融生態系中的地位為何？	提供統計模型估算、統計檢定以及數據探索功能。
+在 Vibe Coding 的學習路徑中，應如何避免「技能空洞化」？	採用「理解後使用」模式：先用 AI 實現功能，再深入理解生成代碼的原理。
+AIEC 十大評測項目與《人工智慧基本法》七大原則的關係為何？	評測項目是技術層面的量表，基本法原則是價值層面的宣示，兩者部分對應。
+在 Claude Code 擴充層中，PreToolUse 鉤子的主要功能是什麼？	在工具調用前執行，若退出代碼不符則可攔截並阻止該調用。
+什麼是「RAG (Retrieval-Augmented Generation)」技術？	檢索增強生成，透過從知識庫檢索相關資訊來減少 AI 的幻覺。
+在 Python 平行運算中，Tasks 列表的作用是什麼？	儲存分割後的子任務（如 Dataframe 的片段），以便分配給不同進程。
+Vibe Coding 如何改變個人 Side Project 的開發體驗？	讓開發者能在短時間內（如週末）完成創意專案，無需從零手寫代碼。
+在金融報表自動化中，Python 可以生成哪三大財務報表？	資產負債表（Balance Sheet）、損益表（Income Statement）、現金流量表（Cash Flow）。
+什麼是「負責任的 AI（Responsible AI）」？	在設計階段即考慮透明度、當責性、公平性與安全性。
+在 Vibe Coding 時代，具備「閱讀與審查 AI 程式碼能力」為何更重要？	因為開發者必須能判斷 AI 生成邏輯的合理性與潛在風險。
+Claude Code 的 headless 模式（-p 參數）常見應用場景為何？	整合進 CI/CD 流程，如自動 PR 審查或 issue 分類。
+在 AI 合規自評中，佐證文件列出「不存在的檔案」會導致什麼後果？	涉及不實陳述，可能產生法律責任。
+Python 的 Quandl 庫主要提供什麼服務？	獲取大量的金融與經濟數據集（包含免費與付費）。
+何謂「對話式開發（Conversational Development）」？	透過與 AI 持續對話、迭代與微調指令來構建軟體的功能。
+在金融 Prompt 工程中，「輸出格式化」指令的例子有哪些？	「以 Markdown 表格呈現」、「輸出為 CSV 字串」。
+Vibe Coding 工具中的「AI 除錯」功能是如何運作的？	分析錯誤訊息並即時提供修正建議，加速問題排除。
+為什麼 AI 生成的代碼在資安關鍵應用（如金融）中需要額外審查？	因為 AI 工具往往缺乏資安防禦邏輯，容易忽略輸入驗證或權限控管。
+在多進程編程中，主程式區塊通常使用什麼條件保護？	if __name__ == "__main__":
+Claude Code 如何建立「Auto Memory（自動記憶）」？	在工作過程中儲存學習到的資訊（如構建命令），並跨對話會話保留。
+在 AIEC 框架下，「公平性（Fairness）」的佐證方式通常包含什麼？	分群偏誤量測報告（Group Bias Measurement Report）。
+Vibe Coding 如何「民主化」軟體開發？	降低技術門檻，讓設計師、產品經理或行銷人員也能參與軟體創作。
+在 Python 中，Pandas 的數據處理通常分為哪五個階段？	加載（Loading）、準備（Preparing）、操縱（Manipulating）、建模（Modeling）、分析（Analyzing）。
+何謂「Grounding」在 AI 準確性防護中的作用？	確保 AI 的回答基於具體事實或檢索到的依據，減少憑空捏造。
+Claude Code 的安裝通常使用哪種簡單方式？	單行 curl 指令或 brew 套件管理器。
+為什麼 Vibe Coding 被認為是「創造力的重新分配」？	讓人類從枯燥的語法工作中解放，轉而專注於系統思維與創意發想。
+在金融數據抓取中，Python 的「Scrape」功能可以用來蒐集哪些資訊？	股價數據、新聞故事、分析師報告。
+什麼是「AI 物料清單 (AI-BOM)」？	用於記錄 AI 系統中所使用的模型、套件版本與依賴項的完整清單。
+在 Claude Code 中，「Agent Teams」模式適用於什麼樣的任務？	可平行化的廣泛工作，如多服務遷移或大規模變更。
